@@ -10,17 +10,27 @@ public class Vertice {
     private double rot;
     public List<Integer> listaAdjascencia; // Lista de vértices do vértice
 
+    //@ public invariant listaAdjascencia != null;
+    //@ requires n >= 0;
+
+    //@ ensures this.listaAdjascencia.size() >= 0;
+    //@ ensures this.listaAdjascencia != null;
     public Vertice(int n){
         this.n = n;
         this.listaAdjascencia = new ArrayList<>();
     }
 
+    //@ requires ver != null;
+    //@ requires ver.listaAdjascencia != null;
+    //@ requires ver.listaAdjascencia.size() >= 0;
 
-
+    //@ ensures this.listaAdjascencia.size() >= 0;
+    //@ ensures this.listaAdjascencia != null;
     public Vertice(Vertice ver){
         this.n = ver.n;
         this.d = ver.d;
         this.rot = ver.rot;
+        this.listaAdjascencia = new ArrayList<>(ver.listaAdjascencia);
     }
 
     @Override

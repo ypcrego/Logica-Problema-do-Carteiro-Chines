@@ -5,27 +5,34 @@ import java.util.List;
 import java.util.Objects;
 
 public class Vertice {
+    //@ spec_public
     private int n; // Identificador do vértice
+
     private double d;
     private double rot;
     public List<Integer> listaAdjascencia; // Lista de vértices do vértice
 
     //@ public invariant listaAdjascencia != null;
-    //@ requires n >= 0;
+    //@ public invariant n >= 0;
+    //@ requires num >= 0;
 
     //@ ensures this.listaAdjascencia.size() >= 0;
     //@ ensures this.listaAdjascencia != null;
-    public Vertice(int n){
-        this.n = n;
+    //@ ensures this.n >= 0;
+
+    public Vertice(int num){
+        this.n = num;
         this.listaAdjascencia = new ArrayList<>();
     }
 
     //@ requires ver != null;
     //@ requires ver.listaAdjascencia != null;
     //@ requires ver.listaAdjascencia.size() >= 0;
+    //@ requires ver.n >= 0;
 
     //@ ensures this.listaAdjascencia.size() >= 0;
     //@ ensures this.listaAdjascencia != null;
+    //@ ensures this.n >= 0;
     public Vertice(Vertice ver){
         this.n = ver.n;
         this.d = ver.d;
@@ -45,22 +52,25 @@ public class Vertice {
         return n == vertice.n;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(n);
-    }
-    
-   
+    // @Override //comentado pois não é necessário para o funcionamento do código
+    // public int hashCode() {
+    //     return Objects.hash(n);
+    // }
 
     //getters e setters
+
+    //@ ensures \result >= 0;
+    //@ pure
     public int getN(){
         return this.n;
     }
 
-    public void setN(int n){
-        this.n = n;
+    //@ requires num >= 0;
+    public void setN(int num){
+        this.n = num;
     }
 
+    //@ pure
     public double getD(){
         return this.d;
     }
@@ -69,6 +79,7 @@ public class Vertice {
         this.d = d;
     }
 
+    //@ pure
     public double getRot(){
         return this.rot;
     }
@@ -77,10 +88,12 @@ public class Vertice {
         this.rot = rot;
     }
 
+    //@ pure
     public int getGrau(){
         return this.listaAdjascencia.size();
     }
 
+    //@ pure
     public List<Integer> getListaAdjacencia(){
         return this.listaAdjascencia;
     }

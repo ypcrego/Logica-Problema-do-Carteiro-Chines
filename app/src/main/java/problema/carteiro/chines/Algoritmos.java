@@ -7,6 +7,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+// import javafx.util.Pair;
 import javafx.util.Pair;
 
 public class Algoritmos {

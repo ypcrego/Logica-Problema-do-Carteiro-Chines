@@ -8,7 +8,9 @@ public class Vertice {
     //@ spec_public
     private int n; // Identificador do vértice
 
+    //@ spec_public
     private double d;
+    //@ spec_public
     private double rot;
     public List<Integer> listaAdjascencia; // Lista de vértices do vértice
 
@@ -19,7 +21,9 @@ public class Vertice {
     //@ ensures this.listaAdjascencia.size() >= 0;
     //@ ensures this.listaAdjascencia != null;
     //@ ensures this.n >= 0;
+    //@ ensures this != null;
 
+    //@ signals_only
     public Vertice(int num){
         this.n = num;
         this.listaAdjascencia = new ArrayList<>();
@@ -33,6 +37,9 @@ public class Vertice {
     //@ ensures this.listaAdjascencia.size() >= 0;
     //@ ensures this.listaAdjascencia != null;
     //@ ensures this.n >= 0;
+    //@ ensures this != null;
+
+    //@ pure
     public Vertice(Vertice ver){
         this.n = ver.n;
         this.d = ver.d;

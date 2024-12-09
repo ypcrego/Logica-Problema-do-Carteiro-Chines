@@ -1,19 +1,25 @@
 package problema.carteiro.chines;
 
-import org.checkerframework.checker.units.qual.A;
+import problema.carteiro.chines.Vertice;
+
+// import org.checkerframework.checker.units.qual.A;
 
 import java.util.*;
 
 public class Grafo {
-
-    public Grafo() {
-        listaVertices = new ArrayList<>();
-    }
-
     private int V = 0; // Número de vértices
+    //@ spec_public
     private int L = 0; // Número de arestas
+    //@ spec_public
+    private List<Vertice> listaVertices = new ArrayList<Vertice>();
 
-    private List<Vertice> listaVertices;
+    //@ public invariant listaVertices != null;
+    //@ ensures listaVertices != null;
+
+    //@ pure
+    public Grafo() {
+        listaVertices = new ArrayList<Vertice>();
+    }
 
     /**
      * Função para adicionar um vértice no grafo.
@@ -33,16 +39,57 @@ public class Grafo {
      * @param v1 Vértice 1
      * @param v2 Vértice 2
      */
+
+    //@ normal_behaviour
+    //@     requires v1 >= 0;
+    //@     requires v2 >= 0;
+    //@     requires listaVertices != null;
+    //@     requires listaVertices.size() > 0;
+    //@     requires L <= Integer.MAX_VALUE;
+    //@     requires verticeExiste(v1) && verticeExiste(v2);
+    //@     assigns L;
+    //@     ensures L == \old(L) + 1;
+    //@ also exceptional_behaviour
+    //@     requires v1 >= 0;
+    //@     requires v2 >= 0;
+    //@     requires listaVertices != null;
+    //@     requires listaVertices.size() > 0;
+    //@     requires L <= Integer.MAX_VALUE;
+    //@     requires !verticeExiste(v1) || !verticeExiste(v2);
+    //@     assigns \nothing;
+    //@     signals (IllegalArgumentException);
+    //@     signals (NullPointerException);
+    //@     signals (IndexOutOfBoundsException);
+    //@     signals (UnsupportedOperationException);
     void addAresta(int v1, int v2) {
+        if (!verticeExiste(v1) || !verticeExiste(v2)){
+            throw new IllegalArgumentException("O vértice v1 não existe");
+        }
+
         Vertice auxv1 = new Vertice(v1);
         Vertice auxv2 = new Vertice(v2);
+        int index1 = listaVertices.indexOf(auxv1);
+        int index2 = listaVertices.indexOf(auxv2);
 
-        if (listaVertices.contains(auxv1) && listaVertices.contains(auxv2)) {
-            listaVertices.get(listaVertices.indexOf(auxv1)).listaAdjascencia.add(v2);
-            listaVertices.get(listaVertices.indexOf(auxv2)).listaAdjascencia.add(v1);
-        } else
-            System.out.println("O vértice não existe");
+        //@ requires index1 >= 0;
+        //@ requires index1 < listaVertices.size();
+        //@ requires index2 >= 0;
+        //@ requires index2 < listaVertices.size();
+        //@ requires listaVertices.get(index1) != null;
+        //@ requires listaVertices.get(index2) != null;
+        listaVertices.get(index1).listaAdjascencia.add(v2);
+        listaVertices.get(index2).listaAdjascencia.add(v1);
         this.L++;
+    }
+
+    //@ pure
+    Boolean verticeExiste(int n) {
+        for (Vertice ver : listaVertices){
+            if(ver.getN() == n){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -64,6 +111,7 @@ public class Grafo {
         this.L--;
     }
 
+    //@ pure
     public void printGrafo() {
         for (Vertice ver : this.listaVertices) {
             System.out.print(ver.getN() + ": ");
@@ -74,6 +122,7 @@ public class Grafo {
         }
     }
 
+    //@ pure
     public void printVertices() {
         for (Vertice ver : this.listaVertices) {
             System.out.print("(n: " + ver.getN() + " d: " + ver.getD() + " rot: " + ver.getRot() + ") \n");
@@ -82,6 +131,7 @@ public class Grafo {
 
     // Getters e Setters
 
+    //@ pure
     public int getV() {
         return V;
     }
@@ -90,6 +140,7 @@ public class Grafo {
         V = v;
     }
 
+    //@ pure
     public int getL() {
         return L;
     }
@@ -98,11 +149,19 @@ public class Grafo {
         L = l;
     }
 
+    //@ pure
     public List<Vertice> getListaVertices() {
         return listaVertices;
     }
 
-    public void setListaVertices(List<Vertice> listaVertices) {
-        this.listaVertices = listaVertices;
+    //@ requires lista != null;
+    //@ ensures this.listaVertices == lista;
+    //@ ensures this.listaVertices.size() == lista.size();
+    //@ ensures this.listaVertices != null;
+    public void setListaVertices(List<Vertice> lista) {
+        if (lista == null) {
+            throw new IllegalArgumentException("Lista não pode ser nula!");
+        }
+        this.listaVertices = lista;
     }
 }

@@ -22,8 +22,9 @@ public class Vertice {
     //@ ensures this.listaAdjascencia != null;
     //@ ensures this.n >= 0;
     //@ ensures this != null;
+    //@ ensures this.n == num;
 
-    //@ signals_only
+    //@ pure
     public Vertice(int num){
         this.n = num;
         this.listaAdjascencia = new ArrayList<>();
@@ -38,6 +39,10 @@ public class Vertice {
     //@ ensures this.listaAdjascencia != null;
     //@ ensures this.n >= 0;
     //@ ensures this != null;
+    //@ ensures this.n == ver.n;
+    //@ ensures this.d == ver.d;
+    //@ ensures this.rot == ver.rot;
+    //@ ensures \forall int i; 0 <= i < this.listaAdjascencia.size(); this.listaAdjascencia.get(i) == ver.listaAdjascencia.get(i);
 
     //@ pure
     public Vertice(Vertice ver){

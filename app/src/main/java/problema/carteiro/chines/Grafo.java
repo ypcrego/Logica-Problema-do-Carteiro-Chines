@@ -14,6 +14,9 @@ public class Grafo {
     //@ spec_public
     private List<Vertice> listaVertices = new ArrayList<Vertice>();
 
+    // @ public invariant listaVertices != null;
+    // @ public invariant \forall int i; 0 <= i < listaVertices.size(); listaVertices.get(i) != null;
+
     public Grafo() {
         listaVertices = new ArrayList<Vertice>();
     }
@@ -136,6 +139,7 @@ public class Grafo {
     //@     requires \forall int i; 0 <= i <= lista.size(); lista.get(i) != null;
     //@     assigns this.listaVertices;
     //@     ensures \forall int i; 0 <= i <= this.listaVertices.size(); this.listaVertices.get(i) == lista.get(i);
+    // @     ensures \forall int i; 0 <= i <= this.listaVertices.size(); this.listaVertices.get(i) != null;
     //@ exceptional_behavior
     //@     requires lista == null;
     //@     assigns \nothing;
@@ -144,6 +148,18 @@ public class Grafo {
         if (lista == null) {
             throw new IllegalArgumentException("Lista não pode ser nula!");
         }
+
+        //@ maintaining 0 <= i <= lista.size();
+        //@ maintaining \forall int j; 0 <= j < lista.size(); lista.get(j) == \old(lista.get(j));
+        //@ loop_writes i;
+        //@ decreases lista.size() - i;
+        for (int i=0; i< lista.size(); i++) {
+            if (lista.get(i) == null) {
+                throw new IllegalArgumentException("A lista contém elementos nulos!");
+            }
+        }
+
+        // this.listaVertices = new ArrayList<>(lista);
         this.listaVertices = lista;
     }
 }

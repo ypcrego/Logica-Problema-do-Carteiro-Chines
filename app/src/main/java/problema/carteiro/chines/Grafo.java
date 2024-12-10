@@ -9,6 +9,7 @@ import java.util.*;
 public class Grafo {
     //@ spec_public
     private int V = 0; // Número de vértices
+    //@ spec_public
     private int L = 0; // Número de arestas
     private List<Vertice> listaVertices = new ArrayList<Vertice>();
 
@@ -106,6 +107,8 @@ public class Grafo {
         V = v;
     }
 
+    //@ ensures \result == this.L;
+    //@ pure
     public int getL() {
         return L;
     }

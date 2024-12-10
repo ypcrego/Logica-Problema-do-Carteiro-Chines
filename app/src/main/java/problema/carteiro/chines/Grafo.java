@@ -103,6 +103,9 @@ public class Grafo {
         return V;
     }
 
+    //@ requires v >= 0;
+    //@ assigns this.V;
+    //@ ensures this.V == v;
     public void setV(int v) {
         V = v;
     }
@@ -113,6 +116,9 @@ public class Grafo {
         return L;
     }
 
+    //@ requires l >= 0;
+    //@ assigns this.L;
+    //@ ensures this.L == l;
     public void setL(int l) {
         L = l;
     }

@@ -11,6 +11,7 @@ public class Grafo {
     private int V = 0; // Número de vértices
     //@ spec_public
     private int L = 0; // Número de arestas
+    //@ spec_public
     private List<Vertice> listaVertices = new ArrayList<Vertice>();
 
     public Grafo() {
@@ -123,10 +124,22 @@ public class Grafo {
         L = l;
     }
 
+    //@ ensures \result == this.listaVertices;
+    //@ pure
     public List<Vertice> getListaVertices() {
         return listaVertices;
     }
 
+    //@ normal_behavior
+    //@     requires lista != null;
+    //@     requires lista.size() >= 0;
+    //@     requires \forall int i; 0 <= i <= lista.size(); lista.get(i) != null;
+    //@     assigns this.listaVertices;
+    //@     ensures \forall int i; 0 <= i <= this.listaVertices.size(); this.listaVertices.get(i) == lista.get(i);
+    //@ exceptional_behavior
+    //@     requires lista == null;
+    //@     assigns \nothing;
+    //@     signals_only IllegalArgumentException;
     public void setListaVertices(List<Vertice> lista) {
         if (lista == null) {
             throw new IllegalArgumentException("Lista não pode ser nula!");

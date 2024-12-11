@@ -27,6 +27,10 @@ public class Grafo {
      * 
      * @param v Vértice a ser adicionado
      */
+    //@ requires v >= 0;
+    //@ requires this.V < Integer.MAX_VALUE;
+    //@ ensures listaVertices.size() == \old(listaVertices.size()) + 1;
+    //@ ensures listaVertices.indexOf(v) >= 0;
     void addVertice(int v) {
         Vertice aux = new Vertice(v);
         if (!listaVertices.contains(aux))

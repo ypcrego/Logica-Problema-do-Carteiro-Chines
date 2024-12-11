@@ -17,20 +17,20 @@ public class Vertice {
     //@ public invariant listaAdjascencia != null;
     //@ public invariant listaAdjascencia.size() >= 0;
     //@ public invariant n >= 0;
-    //@ requires num >= 0;
 
+    //@ normal_behavior
+    //@ requires num >= 0;
     //@ ensures this.listaAdjascencia.size() >= 0;
     //@ ensures this.listaAdjascencia != null;
     //@ ensures this.n >= 0;
     //@ ensures this != null;
     //@ ensures this.n == num;
-
     //@ pure
     public Vertice(int num){
         this.n = num;
         this.listaAdjascencia = new ArrayList<>();
     }
-
+    //@ normal_behavior
     //@ requires ver != null;
     //@ requires ver.listaAdjascencia != null;
     //@ requires ver.listaAdjascencia.size() >= 0;
@@ -72,8 +72,7 @@ public class Vertice {
 
     //getters e setters
 
-    //@ ensures \result >= 0;
-    //@ pure
+    //@ pure helper
     public int getN(){
         return this.n;
     }

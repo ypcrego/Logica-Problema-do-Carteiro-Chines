@@ -93,9 +93,13 @@ public class Grafo {
         }
     }
 
+    //@ ensures \forall int i; 0 <= i < this.listaVertices.size(); this.listaVertices.get(i) != null;
     public void printVertices() {
-        for (Vertice ver : this.listaVertices) {
-            System.out.print("(n: " + ver.getN() + " d: " + ver.getD() + " rot: " + ver.getRot() + ") \n");
+        //@ maintaining 0 <= i <= this.listaVertices.size();
+        //@ loop_writes i;
+        //@ decreases this.listaVertices.size() - i;
+        for (int i=0; i < this.listaVertices.size(); i++) {
+            System.out.print("(n: " + listaVertices.get(i).getN() + " d: " + listaVertices.get(i).getD() + " rot: " + listaVertices.get(i).getRot() + ") \n");
         }
     }
 

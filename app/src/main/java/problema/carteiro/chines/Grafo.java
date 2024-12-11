@@ -15,6 +15,7 @@ public class Grafo {
     private List<Vertice> listaVertices = new ArrayList<Vertice>();
 
     //@ public invariant listaVertices != null;
+    //@ public invariant listaVertices.size() >= 0;
     //@ public invariant \forall int i; 0 <= i < listaVertices.size(); listaVertices.get(i) != null;
 
     public Grafo() {
@@ -83,11 +84,18 @@ public class Grafo {
         this.L--;
     }
 
+    //@ ensures \forall int i; 0 <= i < this.listaVertices.size(); this.listaVertices.get(i) != null;
     public void printGrafo() {
-        for (Vertice ver : this.listaVertices) {
-            System.out.print(ver.getN() + ": ");
-            for (Integer adjver : ver.listaAdjascencia) {
-                System.out.print(adjver + " ");
+        //@ maintaining 0 <= i <= this.listaVertices.size();
+        //@ loop_writes i;
+        //@ decreases this.listaVertices.size() - i;
+        for (int i=0; i < this.listaVertices.size(); i++) {
+            System.out.print(this.listaVertices.get(i).getN() + ": ");
+            //@ maintaining 0 <= j <= this.listaVertices.get(i).listaAdjascencia.size();
+            //@ loop_writes j;
+            //@ decreases this.listaVertices.get(i).listaAdjascencia.size() - j;
+            for (int j=0; j < this.listaVertices.get(i).listaAdjascencia.size(); j++) {
+                System.out.print(this.listaVertices.get(i).listaAdjascencia.get(j) + " ");
             }
             System.out.println();
         }

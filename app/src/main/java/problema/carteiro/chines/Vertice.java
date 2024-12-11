@@ -15,6 +15,7 @@ public class Vertice {
     public List<Integer> listaAdjascencia; // Lista de vértices do vértice
 
     //@ public invariant listaAdjascencia != null;
+    //@ public invariant listaAdjascencia.size() >= 0;
     //@ public invariant n >= 0;
     //@ requires num >= 0;
 

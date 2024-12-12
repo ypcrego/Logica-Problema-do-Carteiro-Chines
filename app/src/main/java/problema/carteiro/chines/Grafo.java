@@ -56,9 +56,21 @@ public class Grafo {
         this.L++;
     }
 
+    //@ requires n >= 0;
+    //@ ensures \result == (\exists int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() == n);
+    //@ ensures \forall int j; 0 <= j < listaVertices.size(); listaVertices.get(j) != null;
+    //@ pure
     Boolean verticeExiste(int n) {
+        // boolean retorno = false;
+
+        //@ maintaining 0 <= i <= this.listaVertices.size();
+        //@ maintaining \forall int j;  0<= j <i; listaVertices.get(j).getN() != n;
+        //@ loop_writes i;
+        //@ decreases this.listaVertices.size() - i;
         for (int i=0; i < listaVertices.size(); i++){
             if(listaVertices.get(i).getN() == n){
+                //@ assert listaVertices.get(i).getN() == n;
+                //@ assert \exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == n;
                 return true;
             }
         }

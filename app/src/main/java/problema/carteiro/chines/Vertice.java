@@ -20,11 +20,11 @@ public class Vertice {
 
     //@ normal_behavior
     //@ requires num >= 0;
-    //@ ensures this.listaAdjascencia.size() >= 0;
+    //@ ensures this.listaAdjascencia.size() == 0;
     //@ ensures this.listaAdjascencia != null;
     //@ ensures this.n >= 0;
-    //@ ensures this != null;
     //@ ensures this.n == num;
+    //@ ensures this != null;
     //@ pure
     public Vertice(int num){
         this.n = num;
@@ -72,12 +72,14 @@ public class Vertice {
 
     //getters e setters
 
-    //@ pure helper
+    //@ normal_behavior
+    //@ pure
     public int getN(){
         return this.n;
     }
 
     //@ requires num >= 0;
+    //@ ensures this.n == num;
     public void setN(int num){
         this.n = num;
     }

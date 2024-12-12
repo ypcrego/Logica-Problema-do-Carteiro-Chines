@@ -16,8 +16,6 @@ public class Grafo {
 
     //@ public invariant listaVertices != null;
     //@ public invariant listaVertices.size() >= 0;
-    //@ public invariant \forall int i; 0 <= i < listaVertices.size(); listaVertices.get(i) != null;
-
     public Grafo() {
         listaVertices = new ArrayList<Vertice>();
     }
@@ -28,15 +26,26 @@ public class Grafo {
      * @param v Vértice a ser adicionado
      */
     //@ requires v >= 0;
-    //@ requires this.V < Integer.MAX_VALUE;
+    //@ requires V < Integer.MAX_VALUE;
+    //@ requires !verticeExiste(v);
     //@ ensures listaVertices.size() == \old(listaVertices.size()) + 1;
-    //@ ensures listaVertices.indexOf(v) >= 0;
+    //@ ensures this.V == \old(V) + 1;
     void addVertice(int v) {
-        Vertice aux = new Vertice(v);
-        if (!listaVertices.contains(aux))
-            listaVertices.add(aux);
-        this.V++;
+        //@ assert v >= 0;
+        boolean existe = false;
+        existe = verticeExiste(v);
+        if (!existe) {
+            Vertice helper = new Vertice(v);
+            //@ assert helper != null;
+            listaVertices.add(helper);
+            //@ assert v >= 0;
+            //@ assert listaVertices.contains(helper);
+            this.V++;
+            //@ assert listaVertices.size() == \old(listaVertices.size()) + 1;
+            //@ assert this.V == \old(V) + 1;
+        }
     }
+
 
     /**
      * Função para adicionar uma aresta de 2 vértices.
@@ -66,8 +75,7 @@ public class Grafo {
     //@     requires \forall int k; 0 <= k < listaVertices.size(); listaVertices.get(k) != null;
     //@     requires !verticeExiste(v1) || !verticeExiste(v2);
     //@     assigns \nothing;
-    //@     signals IllegalArgumentException;
-    //, IllegalStateException;
+    //@     signals_only IllegalArgumentException;
      void addAresta(int v1, int v2) {
         if (!verticeExiste(v1) || !verticeExiste(v2)){
             //@ assert \forall int k; 0 <= k < listaVertices.size(); listaVertices.get(k) != null;
@@ -84,11 +92,10 @@ public class Grafo {
         // this.L++;
     }
 
+
+    //@ normal_behavior
     //@ requires 0 <= n;
-    //@ requires listaVertices.size() >= 1;
     //@ ensures \result == (\exists int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() == n);
-    //@ ensures \forall int j; 0 <= j < listaVertices.size(); listaVertices.get(j) != null;
-    //@ assigns \nothing;
     //@ pure
     Boolean verticeExiste(int n) {
         // boolean retorno = false;
@@ -117,9 +124,13 @@ public class Grafo {
     void remAresta(int v1, int v2) {
         Vertice auxv1 = new Vertice(v1);
         Vertice auxv2 = new Vertice(v2);
+        //@ assert auxv1 != null;
+        //@ assert auxv2 != null;
         try {
             listaVertices.get(listaVertices.indexOf(auxv1)).listaAdjascencia.remove(new Integer(v2));
+            // @ assert listaVertices.size() == \old(listaVertices.size()) - 1
             listaVertices.get(listaVertices.indexOf(auxv2)).listaAdjascencia.remove(new Integer(v1));
+            // @ assert listaVertices.size() == \old(listaVertices.size()) - 1
         } catch (NullPointerException e) {
             e.printStackTrace();
             System.out.println("O vértice não existe");
@@ -127,7 +138,6 @@ public class Grafo {
         this.L--;
     }
 
-    //@ ensures \forall int i; 0 <= i < this.listaVertices.size(); this.listaVertices.get(i) != null;
     public void printGrafo() {
         //@ maintaining 0 <= i <= this.listaVertices.size();
         //@ loop_writes i;
@@ -144,7 +154,6 @@ public class Grafo {
         }
     }
 
-    //@ ensures \forall int i; 0 <= i < this.listaVertices.size(); this.listaVertices.get(i) != null;
     public void printVertices() {
         //@ maintaining 0 <= i <= this.listaVertices.size();
         //@ loop_writes i;

@@ -47,6 +47,18 @@ public class Grafo {
     }
 
 
+    //@ pure
+    private int findVertexIndex(int n) {
+        for (int i = 0; i < listaVertices.size(); i++) {
+            if (listaVertices.get(i).getN() == n) {
+                return i;
+            }
+        }
+        return -1; // Not found
+    }
+
+    
+
     /**
      * Função para adicionar uma aresta de 2 vértices.
      * 
@@ -54,42 +66,25 @@ public class Grafo {
      * @param v2 Vértice 2
      */
 
-    //@ normal_behavior
-    //@     requires 0 <= v1;
-    //@     requires 0 <= v2;
-    //@     requires listaVertices != null;
-    //@     requires listaVertices.size() >= 0;
-    // @     requires \exists int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() == v1;
-    // @     requires \exists int j; 0<= j <listaVertices.size(); listaVertices.get(j).getN() == v2;
-    //@     requires \forall int k; 0 <= k < listaVertices.size(); listaVertices.get(k) != null;
-    //@     requires verticeExiste(v1) && verticeExiste(v2);
-    // @     assigns L, listaVertices;
-    //@     ensures \forall int k; 0 <= k < listaVertices.size(); listaVertices.get(k) != null;
-    //@ exceptional_behavior
-    //@     requires 0 <= v1 < listaVertices.size();
-    //@     requires 0 <= v2 < listaVertices.size();
-    //@     requires listaVertices != null;
-    //@     requires listaVertices.size() >= 2;
-    // @     requires \forall int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() != v1;
-    // @     requires \forall int j; 0<= j <listaVertices.size(); listaVertices.get(j).getN() != v2;
-    //@     requires \forall int k; 0 <= k < listaVertices.size(); listaVertices.get(k) != null;
-    //@     requires !verticeExiste(v1) || !verticeExiste(v2);
-    //@     assigns \nothing;
-    //@     signals_only IllegalArgumentException;
-     void addAresta(int v1, int v2) {
-        if (!verticeExiste(v1) || !verticeExiste(v2)){
-            //@ assert \forall int k; 0 <= k < listaVertices.size(); listaVertices.get(k) != null;
-            throw new IllegalArgumentException("O vértice v1 não existe");
+    //@ requires v1 >= 0;
+    //@ requires v2 >= 0;
+    //@ requires listaVertices != null;
+    //@ requires listaVertices.size() > 2;
+    //@ requires (\exists int i; 0 <= i < listaVertices.size(); listaVertices.get(i).getN() == v1);
+    //@ requires (\exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == v2);
+    //@ requires this.L < Integer.MAX_VALUE;
+    //@ ensures this.L == \old(this.L) + 1;
+    void addAresta(int v1, int v2) {
+        int index1 = findVertexIndex(v1);
+        int index2 = findVertexIndex(v2);
+
+        if (index1 == -1 || index2 == -1) {
+            throw new IllegalArgumentException("One or both vertices do not exist");
         }
 
-        // Vertice auxv1 = new Vertice(v1);
-        // Vertice auxv2 = new Vertice(v2);
-        // int index1 = listaVertices.indexOf(auxv1);
-        // int index2 = listaVertices.indexOf(auxv2);
-
-        // listaVertices.get(index1).listaAdjascencia.add(v2);
-        // listaVertices.get(index2).listaAdjascencia.add(v1);
-        // this.L++;
+        listaVertices.get(index1).listaAdjascencia.add(v2);
+        listaVertices.get(index2).listaAdjascencia.add(v1);
+        this.L++;
     }
 
 
@@ -128,12 +123,11 @@ public class Grafo {
     //@ requires this.L > Integer.MIN_VALUE;
     //@ ensures this.L == \old(this.L) - 1;
     void remAresta(int v1, int v2) {
-        listaVertices.get(v1).listaAdjascencia.remove(new Integer(v2));
-            // @ assert listaVertices.size() == \old(listaVertices.size()) - 1
-        listaVertices.get(v2).listaAdjascencia.remove(new Integer(v1));
-            // @ assert listaVertices.size() == \old(listaVertices.size()) - 1
+        Vertice auxv1 = new Vertice(v1);
+        Vertice auxv2 = new Vertice(v2);
+        listaVertices.get(listaVertices.indexOf(auxv1)).listaAdjascencia.remove(new Integer(v2));
+        listaVertices.get(listaVertices.indexOf(auxv2)).listaAdjascencia.remove(new Integer(v1));
         this.L--;
-
     }
 
     public void printGrafo() {

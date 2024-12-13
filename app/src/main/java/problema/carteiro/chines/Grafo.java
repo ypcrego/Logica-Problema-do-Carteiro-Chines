@@ -48,14 +48,36 @@ public class Grafo {
     }
 
 
+    //@ normal_behavior
+    //@     requires n >= 0;
+    //@     requires verticeExiste(n);
+    //@     ensures listaVertices.get(\result).getN() == n;
+    //@ exceptional_behavior
+    //@     requires n >= 0;
+    //@     requires !verticeExiste(n);
+    //@     assigns \nothing;
+    //@     signals_only IllegalArgumentException;
     //@ pure
-    private int findVertexIndex(int n) {
-        for (int i = 0; i < listaVertices.size(); i++) {
-            if (listaVertices.get(i).getN() == n) {
-                return i;
+    public int findVertexIndex(int n) {
+        int index = 0;
+        if (verticeExiste(n)){
+            //@ maintaining 0 <= i <= this.listaVertices.size();
+            //@ maintaining \forall int j;  0 <= j < i; listaVertices.get(j).getN() != n;
+            //@ loop_writes i;
+            //@ decreases this.listaVertices.size() - i;
+            for (int i = 0; i < listaVertices.size(); i++) {
+                if (listaVertices.get(i).getN() == n) {
+                    //@ assert listaVertices.get(i).getN() == n;
+                    //@ assert \exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == n;
+                    index = i;
+                    return index;
+                }
             }
         }
-        return -1; // Not found
+        else{
+            throw new IllegalArgumentException("O vértice não existe neste grafo!");
+        }
+        return index;
     }
 
 

@@ -15,8 +15,8 @@ public class Grafo {
     private List<Vertice> listaVertices = new ArrayList<Vertice>();
 
     //@ public invariant listaVertices != null;
-    //@ public invariant \forall int i; 0 <= i < listaVertices.size(); listaVertices.get(i) != null;
-
+    //@ public invariant listaVertices.size() >= 0;
+    // @ public invariant \forall int i; 0 <= i < listaVertices.size(); listaVertices.get(i) != null;
     public Grafo() {
         listaVertices = new ArrayList<Vertice>();
     }
@@ -26,12 +26,39 @@ public class Grafo {
      * 
      * @param v Vértice a ser adicionado
      */
+    //@ requires v >= 0;
+    //@ requires V < Integer.MAX_VALUE;
+    //@ requires !verticeExiste(v);
+    //@ ensures listaVertices.size() == \old(listaVertices.size()) + 1;
+    //@ ensures this.V == \old(V) + 1;
     void addVertice(int v) {
-        Vertice aux = new Vertice(v);
-        if (!listaVertices.contains(aux))
-            listaVertices.add(aux);
-        this.V++;
+        //@ assert v >= 0;
+        boolean existe = false;
+        existe = verticeExiste(v);
+        if (!existe) {
+            Vertice helper = new Vertice(v);
+            //@ assert helper != null;
+            listaVertices.add(helper);
+            //@ assert v >= 0;
+            //@ assert listaVertices.contains(helper);
+            this.V++;
+            //@ assert listaVertices.size() == \old(listaVertices.size()) + 1;
+            //@ assert this.V == \old(V) + 1;
+        }
     }
+
+
+    //@ pure
+    private int findVertexIndex(int n) {
+        for (int i = 0; i < listaVertices.size(); i++) {
+            if (listaVertices.get(i).getN() == n) {
+                return i;
+            }
+        }
+        return -1; // Not found
+    }
+
+
 
     /**
      * Função para adicionar uma aresta de 2 vértices.
@@ -40,27 +67,48 @@ public class Grafo {
      * @param v2 Vértice 2
      */
 
+    //@ requires v1 >= 0;
+    //@ requires v2 >= 0;
+    //@ requires listaVertices != null;
+    //@ requires listaVertices.size() > 2;
+    //@ requires (\exists int i; 0 <= i < listaVertices.size(); listaVertices.get(i).getN() == v1);
+    //@ requires (\exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == v2);
+    //@ requires this.L < Integer.MAX_VALUE;
+    //@ ensures this.L == \old(this.L) + 1;
+    // TODO especificar que agora existe aresta entre v1 e v2
     void addAresta(int v1, int v2) {
-        if (!verticeExiste(v1) || !verticeExiste(v2)){
-            throw new IllegalArgumentException("O vértice v1 não existe");
-        }
+        int index1 = findVertexIndex(v1);
+        int index2 = findVertexIndex(v2);
 
-        Vertice auxv1 = new Vertice(v1);
-        Vertice auxv2 = new Vertice(v2);
-        int index1 = listaVertices.indexOf(auxv1);
-        int index2 = listaVertices.indexOf(auxv2);
+        if (index1 == -1 || index2 == -1) {
+            throw new IllegalArgumentException("One or both vertices do not exist");
+        }
 
         listaVertices.get(index1).listaAdjascencia.add(v2);
         listaVertices.get(index2).listaAdjascencia.add(v1);
         this.L++;
     }
 
+
+    //@ normal_behavior
+    //@ requires 0 <= n;
+    //@ ensures \result == (\exists int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() == n);
+    //@ pure
     Boolean verticeExiste(int n) {
+        // boolean retorno = false;
+
+        //@ maintaining 0 <= i <= this.listaVertices.size();
+        //@ maintaining \forall int j;  0<= j <i; listaVertices.get(j).getN() != n;
+        //@ loop_writes i;
+        //@ decreases this.listaVertices.size() - i;
         for (int i=0; i < listaVertices.size(); i++){
             if(listaVertices.get(i).getN() == n){
+                //@ assert listaVertices.get(i).getN() == n;
+                //@ assert \exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == n;
                 return true;
             }
         }
+        //@ assert \forall int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() != n;
         return false;
     }
 
@@ -70,32 +118,43 @@ public class Grafo {
      * @param v1 Vértice 1
      * @param v2 Vértice 2
      */
+    //@ requires v1 >= 0;
+    //@ requires v2 >= 0;
+    //@ requires \exists int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() == v1;
+    //@ requires \exists int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() == v2;
+    //@ requires this.L > Integer.MIN_VALUE;
+    //@ ensures this.L == \old(this.L) - 1;
+    // TODO especificar que nao existe mais aresta entre v1 e v2
     void remAresta(int v1, int v2) {
         Vertice auxv1 = new Vertice(v1);
         Vertice auxv2 = new Vertice(v2);
-        try {
-            listaVertices.get(listaVertices.indexOf(auxv1)).listaAdjascencia.remove(new Integer(v2));
-            listaVertices.get(listaVertices.indexOf(auxv2)).listaAdjascencia.remove(new Integer(v1));
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            System.out.println("O vértice não existe");
-        }
+        listaVertices.get(listaVertices.indexOf(auxv1)).listaAdjascencia.remove(new Integer(v2));
+        listaVertices.get(listaVertices.indexOf(auxv2)).listaAdjascencia.remove(new Integer(v1));
         this.L--;
     }
 
     public void printGrafo() {
-        for (Vertice ver : this.listaVertices) {
-            System.out.print(ver.getN() + ": ");
-            for (Integer adjver : ver.listaAdjascencia) {
-                System.out.print(adjver + " ");
+        //@ maintaining 0 <= i <= this.listaVertices.size();
+        //@ loop_writes i;
+        //@ decreases this.listaVertices.size() - i;
+        for (int i=0; i < this.listaVertices.size(); i++) {
+            System.out.print(this.listaVertices.get(i).getN() + ": ");
+            //@ maintaining 0 <= j <= this.listaVertices.get(i).listaAdjascencia.size();
+            //@ loop_writes j;
+            //@ decreases this.listaVertices.get(i).listaAdjascencia.size() - j;
+            for (int j=0; j < this.listaVertices.get(i).listaAdjascencia.size(); j++) {
+                System.out.print(this.listaVertices.get(i).listaAdjascencia.get(j) + " ");
             }
             System.out.println();
         }
     }
 
     public void printVertices() {
-        for (Vertice ver : this.listaVertices) {
-            System.out.print("(n: " + ver.getN() + " d: " + ver.getD() + " rot: " + ver.getRot() + ") \n");
+        //@ maintaining 0 <= i <= this.listaVertices.size();
+        //@ loop_writes i;
+        //@ decreases this.listaVertices.size() - i;
+        for (int i=0; i < this.listaVertices.size(); i++) {
+            System.out.print("(n: " + listaVertices.get(i).getN() + " d: " + listaVertices.get(i).getD() + " rot: " + listaVertices.get(i).getRot() + ") \n");
         }
     }
 

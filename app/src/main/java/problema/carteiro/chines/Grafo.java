@@ -41,24 +41,50 @@ public class Grafo {
      * @param v2 Vértice 2
      */
 
-    void addAresta(int v1, int v2) {
+    //@ normal_behavior
+    //@     requires 0 <= v1;
+    //@     requires 0 <= v2;
+    //@     requires listaVertices != null;
+    //@     requires listaVertices.size() >= 0;
+    // @     requires \exists int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() == v1;
+    // @     requires \exists int j; 0<= j <listaVertices.size(); listaVertices.get(j).getN() == v2;
+    //@     requires \forall int k; 0 <= k < listaVertices.size(); listaVertices.get(k) != null;
+    //@     requires verticeExiste(v1) && verticeExiste(v2);
+    // @     assigns L, listaVertices;
+    //@     ensures \forall int k; 0 <= k < listaVertices.size(); listaVertices.get(k) != null;
+    //@ exceptional_behavior
+    //@     requires 0 <= v1 < listaVertices.size();
+    //@     requires 0 <= v2 < listaVertices.size();
+    //@     requires listaVertices != null;
+    //@     requires listaVertices.size() >= 2;
+    // @     requires \forall int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() != v1;
+    // @     requires \forall int j; 0<= j <listaVertices.size(); listaVertices.get(j).getN() != v2;
+    //@     requires \forall int k; 0 <= k < listaVertices.size(); listaVertices.get(k) != null;
+    //@     requires !verticeExiste(v1) || !verticeExiste(v2);
+    //@     assigns \nothing;
+    //@     signals IllegalArgumentException;
+    //, IllegalStateException;
+     void addAresta(int v1, int v2) {
         if (!verticeExiste(v1) || !verticeExiste(v2)){
+            //@ assert \forall int k; 0 <= k < listaVertices.size(); listaVertices.get(k) != null;
             throw new IllegalArgumentException("O vértice v1 não existe");
         }
 
-        Vertice auxv1 = new Vertice(v1);
-        Vertice auxv2 = new Vertice(v2);
-        int index1 = listaVertices.indexOf(auxv1);
-        int index2 = listaVertices.indexOf(auxv2);
+        // Vertice auxv1 = new Vertice(v1);
+        // Vertice auxv2 = new Vertice(v2);
+        // int index1 = listaVertices.indexOf(auxv1);
+        // int index2 = listaVertices.indexOf(auxv2);
 
-        listaVertices.get(index1).listaAdjascencia.add(v2);
-        listaVertices.get(index2).listaAdjascencia.add(v1);
-        this.L++;
+        // listaVertices.get(index1).listaAdjascencia.add(v2);
+        // listaVertices.get(index2).listaAdjascencia.add(v1);
+        // this.L++;
     }
 
-    //@ requires n >= 0;
+    //@ requires 0 <= n;
+    //@ requires listaVertices.size() >= 1;
     //@ ensures \result == (\exists int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() == n);
     //@ ensures \forall int j; 0 <= j < listaVertices.size(); listaVertices.get(j) != null;
+    //@ assigns \nothing;
     //@ pure
     Boolean verticeExiste(int n) {
         // boolean retorno = false;
@@ -74,6 +100,7 @@ public class Grafo {
                 return true;
             }
         }
+        //@ assert \forall int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() != n;
         return false;
     }
 

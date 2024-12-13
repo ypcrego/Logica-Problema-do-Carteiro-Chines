@@ -53,6 +53,16 @@ public class Vertice {
         this.listaAdjascencia = new ArrayList<>(ver.listaAdjascencia);
     }
 
+    //@ also normal_behavior
+    //@ requires this == o;
+    //@ ensures \result == true;
+    //@ also normal_behavior
+    //@ requires this != o && (o == null || getClass() != o.getClass());
+    //@ ensures \result == false;
+    //@ also normal_behavior
+    //@ requires this != o && !(o == null || getClass() != o.getClass());
+    //@ ensures \result == (n == ((Vertice)o).n);
+    //@ pure
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -61,8 +71,7 @@ public class Vertice {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Vertice vertice = (Vertice) o;
-        return n == vertice.n;
+        return n == ((Vertice)o).n;
     }
 
     // @Override //comentado pois não é necessário para o funcionamento do código
@@ -73,6 +82,7 @@ public class Vertice {
     //getters e setters
 
     //@ normal_behavior
+    //@ ensures \result == this.n;
     //@ pure
     public int getN(){
         return this.n;
@@ -84,6 +94,7 @@ public class Vertice {
         this.n = num;
     }
 
+    //@ ensures \result == this.d;
     //@ pure
     public double getD(){
         return this.d;
@@ -93,6 +104,7 @@ public class Vertice {
         this.d = d;
     }
 
+    //@ ensures \result == this.rot;
     //@ pure
     public double getRot(){
         return this.rot;
@@ -102,11 +114,13 @@ public class Vertice {
         this.rot = rot;
     }
 
+    //@ ensures \result == this.listaAdjascencia.size();
     //@ pure
     public int getGrau(){
         return this.listaAdjascencia.size();
     }
 
+    //@ ensures \result == this.listaAdjascencia;
     //@ pure
     public List<Integer> getListaAdjacencia(){
         return this.listaAdjascencia;

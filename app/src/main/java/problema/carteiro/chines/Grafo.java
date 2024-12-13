@@ -121,21 +121,19 @@ public class Grafo {
      * @param v1 Vértice 1
      * @param v2 Vértice 2
      */
+    //@ requires v1 >= 0;
+    //@ requires v2 >= 0;
+    //@ requires \exists int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() == v1;
+    //@ requires \exists int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() == v2;
+    //@ requires this.L > Integer.MIN_VALUE;
+    //@ ensures this.L == \old(this.L) - 1;
     void remAresta(int v1, int v2) {
-        Vertice auxv1 = new Vertice(v1);
-        Vertice auxv2 = new Vertice(v2);
-        //@ assert auxv1 != null;
-        //@ assert auxv2 != null;
-        try {
-            listaVertices.get(listaVertices.indexOf(auxv1)).listaAdjascencia.remove(new Integer(v2));
+        listaVertices.get(v1).listaAdjascencia.remove(new Integer(v2));
             // @ assert listaVertices.size() == \old(listaVertices.size()) - 1
-            listaVertices.get(listaVertices.indexOf(auxv2)).listaAdjascencia.remove(new Integer(v1));
+        listaVertices.get(v2).listaAdjascencia.remove(new Integer(v1));
             // @ assert listaVertices.size() == \old(listaVertices.size()) - 1
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            System.out.println("O vértice não existe");
-        }
         this.L--;
+
     }
 
     public void printGrafo() {

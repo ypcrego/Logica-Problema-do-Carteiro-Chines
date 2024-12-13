@@ -57,7 +57,7 @@ public class Grafo {
         return -1; // Not found
     }
 
-    
+
 
     /**
      * Função para adicionar uma aresta de 2 vértices.
@@ -74,6 +74,7 @@ public class Grafo {
     //@ requires (\exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == v2);
     //@ requires this.L < Integer.MAX_VALUE;
     //@ ensures this.L == \old(this.L) + 1;
+    // TODO especificar que agora existe aresta entre v1 e v2
     void addAresta(int v1, int v2) {
         int index1 = findVertexIndex(v1);
         int index2 = findVertexIndex(v2);
@@ -122,6 +123,7 @@ public class Grafo {
     //@ requires \exists int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() == v2;
     //@ requires this.L > Integer.MIN_VALUE;
     //@ ensures this.L == \old(this.L) - 1;
+    // TODO especificar que nao existe mais aresta entre v1 e v2
     void remAresta(int v1, int v2) {
         Vertice auxv1 = new Vertice(v1);
         Vertice auxv2 = new Vertice(v2);

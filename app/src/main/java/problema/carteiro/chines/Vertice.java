@@ -53,6 +53,24 @@ public class Vertice {
         this.listaAdjascencia = new ArrayList<>(ver.listaAdjascencia);
     }
 
+    //@ requires 0 <= ver;
+    //@ ensures \result == (\exists int i; 0<= i <listaAdjascencia.size(); listaAdjascencia.get(i) == ver);
+    //@ pure
+    public boolean adjacente(int ver){
+        //@ maintaining 0 <= i <= this.listaAdjascencia.size();
+        //@ maintaining \forall int j;  0 <= j <i; listaAdjascencia.get(j) != ver;
+        //@ loop_writes i;
+        //@ decreases this.listaAdjascencia.size() - i;
+        for (int i=0; i < listaAdjascencia.size(); i++){
+            if(listaAdjascencia.get(i) == ver){
+                //@ assert listaAdjascencia.get(i) == ver;
+                //@ assert \exists int j; 0 <= j < listaAdjascencia.size(); listaAdjascencia.get(j) == ver;
+                return true;
+            }
+        }
+        return false;
+    }
+
     //@ also public  normal_behavior
     //@ requires this == o;
     //@ ensures \result == true;
@@ -89,6 +107,7 @@ public class Vertice {
     }
 
     //@ requires num >= 0;
+    //@ assigns this.n;
     //@ ensures this.n == num;
     public void setN(int num){
         this.n = num;
@@ -100,6 +119,9 @@ public class Vertice {
         return this.d;
     }
 
+    //@ requires d >= 0;
+    //@ assigns this.d;
+    //@ ensures this.d == d;
     public void setD(double d){
         this.d = d;
     }
@@ -110,6 +132,9 @@ public class Vertice {
         return this.rot;
     }
 
+    //@ requires rot >= 0;
+    //@ assigns this.rot;
+    //@ ensures this.rot == rot;
     public void setRot(double rot){
         this.rot = rot;
     }

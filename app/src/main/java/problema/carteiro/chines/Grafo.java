@@ -17,6 +17,10 @@ public class Grafo {
     //@ public invariant listaVertices != null;
     //@ public invariant listaVertices.size() >= 0;
     // @ public invariant \forall int i; 0 <= i < listaVertices.size(); listaVertices.get(i) != null;
+
+    //@ ensures this.listaVertices.size() == 0;
+    //@ ensures this.listaVertices != null;
+    //@ pure
     public Grafo() {
         listaVertices = new ArrayList<Vertice>();
     }
@@ -44,54 +48,62 @@ public class Grafo {
         }
     }
 
-
-  //@ pure
-  private int findVertexIndex(int n) {
-    for (int i = 0; i < listaVertices.size(); i++) {
-        if (listaVertices.get(i).getN() == n) {
-            return i;
+    /**
+     * Função para adicionar uma aresta de 2 vértices.
+     * 
+     * @param v1 Vértice 1
+     * @param v2 Vértice 2
+     */
+     //@ requires v1 >= 0;
+    //@ requires v2 >= 0;
+    //@ requires listaVertices != null;
+    //@ requires listaVertices.size() > 2;
+    //@ requires (\exists int i; 0 <= i < listaVertices.size(); listaVertices.get(i).getN() == v1);
+    //@ requires (\exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == v2);
+    //@ requires this.L < Integer.MAX_VALUE;
+    //@ ensures this.L == \old(this.L) + 1;
+    // TODO especificar que agora existe aresta entre v1 e v2
+    void addAresta(int v1, int v2) {
+        int index1 = -1;
+        int index2 = -1;
+        //@ maintaining 0 <= i <= this.listaVertices.size();
+        //@ maintaining \forall int j;  0 <= j < i; listaVertices.get(j).getN() != v1;
+        //@ loop_writes i;
+        //@ decreases this.listaVertices.size() - i;
+        for (int i = 0; i < listaVertices.size(); i++) {
+            if (listaVertices.get(i).getN() == v1) {
+                //@ assert listaVertices.get(i).getN() == v1;
+                //@ assert \exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == v1;
+                index1 = i;
+                break;
+            }
         }
+        //@ assert listaVertices.get(index1).getN() == v1;
+
+        //@ maintaining 0 <= i <= this.listaVertices.size();
+        //@ maintaining \forall int j;  0 <= j < i; listaVertices.get(j).getN() != v2;
+        //@ loop_writes i;
+        //@ decreases this.listaVertices.size() - i;
+        for (int i = 0; i < listaVertices.size(); i++) {
+            if (listaVertices.get(i).getN() == v2) {
+                //@ assert listaVertices.get(i).getN() == v2;
+                //@ assert \exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == v2;
+                index2 = i;
+                break;
+            }
+        }
+
+        listaVertices.get(index1).listaAdjascencia.add(v2);
+        listaVertices.get(index2).listaAdjascencia.add(v1);
+        this.L++;
     }
-    return -1; // Not found
-}
-
-
-
-/**
- * Função para adicionar uma aresta de 2 vértices.
- * 
- * @param v1 Vértice 1
- * @param v2 Vértice 2
- */
-
-//@ requires v1 >= 0;
-//@ requires v2 >= 0;
-//@ requires listaVertices != null;
-//@ requires listaVertices.size() > 2;
-//@ requires (\exists int i; 0 <= i < listaVertices.size(); listaVertices.get(i).getN() == v1);
-//@ requires (\exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == v2);
-//@ requires this.L < Integer.MAX_VALUE;
-//@ ensures this.L == \old(this.L) + 1;
-// TODO especificar que agora existe aresta entre v1 e v2
-void addAresta(int v1, int v2) {
-    int index1 = findVertexIndex(v1);
-    int index2 = findVertexIndex(v2);
-
-    if (index1 == -1 || index2 == -1) {
-        throw new IllegalArgumentException("One or both vertices do not exist");
-    }
-
-    listaVertices.get(index1).listaAdjascencia.add(v2);
-    listaVertices.get(index2).listaAdjascencia.add(v1);
-    this.L++;
-}
 
 
     //@ normal_behavior
     //@ requires 0 <= n;
     //@ ensures \result == (\exists int i; 0<= i <listaVertices.size(); listaVertices.get(i).getN() == n);
     //@ pure
-    Boolean verticeExiste(int n) {
+    public Boolean verticeExiste(int n) {
         // boolean retorno = false;
 
         //@ maintaining 0 <= i <= this.listaVertices.size();

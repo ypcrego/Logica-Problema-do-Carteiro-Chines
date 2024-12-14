@@ -125,4 +125,5 @@ public class Vertice {
     public List<Integer> getListaAdjascencia(){
         return this.listaAdjascencia;
     }
+
 }

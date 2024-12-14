@@ -18,12 +18,12 @@ public class Algoritmos {
     //@ ensures x.getListaAdjascencia().contains(y) && y.getListaAdjascencia().contains(x);
     //@ model public pure void lemmaVerticesAdjascentes(Vertice x, Vertice y) {}
 
-    // Lema: um caminho entre dois vértices i e j é uma lista de vértices, onde o primeiro é i e o último é j, e pra cada 2 elementos dessa lista,
-    // se os índices são adjacentes, então os vértices são adjacentes
+    // Lema: um caminho entre dois vértices i e j é uma lista de vértices onde o primeiro é i e o último é j, e pra cada 2 elementos dessa lista,
+    // se os índices são adjacentes, então os vértices são adjacentes.
     //@ requires i != null;
     //@ requires j != null;
     //@ ensures lista.get(0) == i && lista.get(lista.size()-1) == j;
-    //@ ensures \forall int x, y; 0 <= x < lista.size() && 0 <= y < lista.size(); (x == y+1 || x == y-1) ==> (lista.get(x).getListaAdjascencia().contains(lista.get(y)) && lista.get(y).getListaAdjascencia().contains(lista.get(x)));
+    //@ ensures \forall int x, y; 0 <= x < lista.size() && 0 <= y < lista.size(); (x == y+1 || x == y-1) ==> (lista.get(x).adjacente(y)) && lista.get(y).adjacente(x));
     //@ model public pure void lemmaCaminho(Vertice i, Vertice j, ArrayList<Vertice> lista) {}
 
     // @ requires i != null;
@@ -49,16 +49,10 @@ public class Algoritmos {
     //@ requires (\forall Vertice v; grafo.getListaVertices().contains(v); v.listaAdjascencia != null);
     //@ ensures (\forall Vertice v; grafo.getListaVertices().contains(v); visitados.contains(v.getN()));
     public void checarGrafoConexo(Grafo grafo, Vertice ver, List<Integer> visitados) {
-
-        if (!visitados.contains(ver.getN())) {
-            visitados.add(ver.getN());
-        }
-
-    // Para cada vértice adjascente do atual, se ele não foi visitado, visita e
-    // checa seus adjascentes
+    // Para cada vértice adjascente do atual, se ele não foi visitado, visita e checa seus adjascentes
     // @ maintaining 0 <= \count <= visitados.size();
+    // @ maintaining 0 <= visitados.size() <= grafo.getListaVertices().size();
     // @ maintaining (\forall int n; 0 <= n < visitados.size(); ((visitados.contains(n) ==> (\exists Vertice v; grafo.getListaVertices().contains(v); v.getN() == n))));
-    // @ maintaining 0 <=visitados.size() <= grafo.getListaVertices().size();
     // @ loop_writes visitados;
     // @ decreases grafo.getListaVertices().size() - visitados.size(); 
         for (Integer nVertice : ver.listaAdjascencia) {
@@ -91,6 +85,7 @@ public class Algoritmos {
         checarGrafoConexo(grafo, ver, visitados);
         //@ assert visitados != null;
         // Se todos vertices foram visitados, o grafo é conexo
+
         if (visitados.size() == grafo.getV()) {
         conexo = true;
         }
@@ -204,6 +199,8 @@ public class Algoritmos {
 
         // Verifica se o grau dos vértices é ímpar, se o vértice for ímpar adiciona na
         // lista de impares
+
+        //@ maintaining 0 <= \count <= grafo.getListaVertices().size();
         for (Vertice ver : grafo.getListaVertices()) {
             if (ver.getGrau() % 2 != 0) {
                 
@@ -302,7 +299,7 @@ public class Algoritmos {
             for (int i = 0; i < combinacoesDePares.get(menor).size(); i++) {
                 dijkstra(grafo, grafo.getListaVertices().get(combinacoesDePares.get(menor).get(i).getKey() - 1));
                 caminhosGerados.add(
-                        calculaCaminho(grafo, combinacoesDePares.get(menor).get(i).getKey(),
+                        calculaMenorCaminho(grafo, combinacoesDePares.get(menor).get(i).getKey(),
                                 combinacoesDePares.get(menor).get(i).getValue()));
                
             }
@@ -404,19 +401,31 @@ public class Algoritmos {
        
     }
 
+    /* public boolean temCaminho(Grafo grafo, int v1, int v2){
+            for (int i = 0; i < grafo.getListaVertices.size(); i++) {
+            }
+            return false;
+        }
+    */
+
     // retorna o menor caminho do vértice destino até o vértice fonte depois que
     // dijkstra é executado
-    public ArrayList<Integer> calculaCaminho(Grafo grafo, Integer fonte, Integer destino) {
+    //@ requires Integer.MIN_VALUE < 0 <= destino < Integer.MAX_VALUE;
+    //@ requires \forall int i; 0 <= i < grafo.getListaVertices().size(); grafo.getListaVertices().get(i).getRot() >= 0;
+    public ArrayList<Integer> calculaMenorCaminho(Grafo grafo, Integer fonte, int destino) {
 
         ArrayList<Integer> caminho = new ArrayList<>();
         caminho.add(destino);
-        Integer i = destino;// posicao atual
 
-        while (grafo.getListaVertices().get(i - 1).getRot() != fonte) {// enquanto não chegar em fonte
-            double rotulo = grafo.getListaVertices().get(i - 1).getRot();
-            i = (int) rotulo;
+        while (grafo.getListaVertices().get(destino-1).getRot() != fonte) {// enquanto não chegar em fonte
+            double rotulo = grafo.getListaVertices().get(destino - 1).getRot();
+
+            if (rotulo-1 >= Integer.MIN_VALUE) {
+                destino = (int) rotulo;
+                //@ assert (destino-1) >= Integer.MIN_VALUE;
+            }
             
-            caminho.add(i);
+            caminho.add(destino);
         }
 
         caminho.add(fonte);

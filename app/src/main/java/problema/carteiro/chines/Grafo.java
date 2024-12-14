@@ -33,14 +33,11 @@ public class Grafo {
     //@ ensures this.V == \old(V) + 1;
     void addVertice(int v) {
         //@ assert v >= 0;
-        boolean existe = false;
-        existe = verticeExiste(v);
-        if (!existe) {
-            Vertice helper = new Vertice(v);
-            //@ assert helper != null;
-            listaVertices.add(helper);
-            //@ assert v >= 0;
-            //@ assert listaVertices.contains(helper);
+        if (!verticeExiste(v)) {
+            Vertice vertice = new Vertice(v);
+            //@ assert vertice != null;
+            listaVertices.add(vertice);
+            //@ assert listaVertices.contains(vertice);
             this.V++;
             //@ assert listaVertices.size() == \old(listaVertices.size()) + 1;
             //@ assert this.V == \old(V) + 1;
@@ -48,46 +45,46 @@ public class Grafo {
     }
 
 
-    //@ pure
-    private int findVertexIndex(int n) {
-        for (int i = 0; i < listaVertices.size(); i++) {
-            if (listaVertices.get(i).getN() == n) {
-                return i;
-            }
+  //@ pure
+  private int findVertexIndex(int n) {
+    for (int i = 0; i < listaVertices.size(); i++) {
+        if (listaVertices.get(i).getN() == n) {
+            return i;
         }
-        return -1; // Not found
+    }
+    return -1; // Not found
+}
+
+
+
+/**
+ * Função para adicionar uma aresta de 2 vértices.
+ * 
+ * @param v1 Vértice 1
+ * @param v2 Vértice 2
+ */
+
+//@ requires v1 >= 0;
+//@ requires v2 >= 0;
+//@ requires listaVertices != null;
+//@ requires listaVertices.size() > 2;
+//@ requires (\exists int i; 0 <= i < listaVertices.size(); listaVertices.get(i).getN() == v1);
+//@ requires (\exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == v2);
+//@ requires this.L < Integer.MAX_VALUE;
+//@ ensures this.L == \old(this.L) + 1;
+// TODO especificar que agora existe aresta entre v1 e v2
+void addAresta(int v1, int v2) {
+    int index1 = findVertexIndex(v1);
+    int index2 = findVertexIndex(v2);
+
+    if (index1 == -1 || index2 == -1) {
+        throw new IllegalArgumentException("One or both vertices do not exist");
     }
 
-
-
-    /**
-     * Função para adicionar uma aresta de 2 vértices.
-     * 
-     * @param v1 Vértice 1
-     * @param v2 Vértice 2
-     */
-
-    //@ requires v1 >= 0;
-    //@ requires v2 >= 0;
-    //@ requires listaVertices != null;
-    //@ requires listaVertices.size() > 2;
-    //@ requires (\exists int i; 0 <= i < listaVertices.size(); listaVertices.get(i).getN() == v1);
-    //@ requires (\exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == v2);
-    //@ requires this.L < Integer.MAX_VALUE;
-    //@ ensures this.L == \old(this.L) + 1;
-    // TODO especificar que agora existe aresta entre v1 e v2
-    void addAresta(int v1, int v2) {
-        int index1 = findVertexIndex(v1);
-        int index2 = findVertexIndex(v2);
-
-        if (index1 == -1 || index2 == -1) {
-            throw new IllegalArgumentException("One or both vertices do not exist");
-        }
-
-        listaVertices.get(index1).listaAdjascencia.add(v2);
-        listaVertices.get(index2).listaAdjascencia.add(v1);
-        this.L++;
-    }
+    listaVertices.get(index1).listaAdjascencia.add(v2);
+    listaVertices.get(index2).listaAdjascencia.add(v1);
+    this.L++;
+}
 
 
     //@ normal_behavior

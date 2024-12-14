@@ -17,6 +17,10 @@ public class Grafo {
     //@ public invariant listaVertices != null;
     //@ public invariant listaVertices.size() >= 0;
     // @ public invariant \forall int i; 0 <= i < listaVertices.size(); listaVertices.get(i) != null;
+
+    //@ ensures this.listaVertices.size() == 0;
+    //@ ensures this.listaVertices != null;
+    //@ pure
     public Grafo() {
         listaVertices = new ArrayList<Vertice>();
     }

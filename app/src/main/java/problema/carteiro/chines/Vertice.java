@@ -98,6 +98,7 @@ public class Vertice {
     }
 
     //@ requires num >= 0;
+    //@ assigns this.n;
     //@ ensures this.n == num;
     public void setN(int num){
         this.n = num;
@@ -109,6 +110,9 @@ public class Vertice {
         return this.d;
     }
 
+    //@ requires d >= 0;
+    //@ assigns this.d;
+    //@ ensures this.d == d;
     public void setD(double d){
         this.d = d;
     }
@@ -119,6 +123,9 @@ public class Vertice {
         return this.rot;
     }
 
+    //@ requires rot >= 0;
+    //@ assigns this.rot;
+    //@ ensures this.rot == rot;
     public void setRot(double rot){
         this.rot = rot;
     }

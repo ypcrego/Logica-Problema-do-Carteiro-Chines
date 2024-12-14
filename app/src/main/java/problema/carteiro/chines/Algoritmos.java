@@ -327,10 +327,15 @@ public class Algoritmos {
         System.out.println();
     }
 
+    //@ ensures \forall int i; 0 <= i < lista.size(); (\result).getD() <= lista.get(i).getD();
     // retorna o vértice com menor distância em uma lista de vértices
     public Vertice menorD(ArrayList<Vertice> lista) {
         Vertice m = lista.get(0);
-
+        //@ assert m != null;
+        //@ maintaining 0 <= i <= lista.size();
+        //@ maintaining \forall int j;  0 <= j < i; m.getD() <= lista.get(j).getD();
+        //@ loop_writes i, m;
+        //@ decreases lista.size() - i;
         for (int i = 0; i < lista.size(); i++) {
             if (lista.get(i).getD() < m.getD()) {
                 m = lista.get(i);

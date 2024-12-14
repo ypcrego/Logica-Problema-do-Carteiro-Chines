@@ -53,6 +53,24 @@ public class Vertice {
         this.listaAdjascencia = new ArrayList<>(ver.listaAdjascencia);
     }
 
+    //@ requires 0 <= ver;
+    //@ ensures \result == (\exists int i; 0<= i <listaAdjascencia.size(); listaAdjascencia.get(i) == ver);
+    //@ pure
+    public boolean adjacente(int ver){
+        //@ maintaining 0 <= i <= this.listaAdjascencia.size();
+        //@ maintaining \forall int j;  0 <= j <i; listaAdjascencia.get(j) != ver;
+        //@ loop_writes i;
+        //@ decreases this.listaAdjascencia.size() - i;
+        for (int i=0; i < listaAdjascencia.size(); i++){
+            if(listaAdjascencia.get(i) == ver){
+                //@ assert listaAdjascencia.get(i) == ver;
+                //@ assert \exists int j; 0 <= j < listaAdjascencia.size(); listaAdjascencia.get(j) == ver;
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

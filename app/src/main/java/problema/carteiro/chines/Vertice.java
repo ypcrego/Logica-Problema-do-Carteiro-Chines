@@ -18,7 +18,7 @@ public class Vertice {
     //@ public invariant listaAdjascencia.size() >= 0;
     //@ public invariant n >= 0;
 
-    //@ normal_behavior
+    //@ public normal_behavior
     //@ requires num >= 0;
     //@ ensures this.listaAdjascencia.size() == 0;
     //@ ensures this.listaAdjascencia != null;
@@ -30,7 +30,7 @@ public class Vertice {
         this.n = num;
         this.listaAdjascencia = new ArrayList<>();
     }
-    //@ normal_behavior
+    //@ public normal_behavior
     //@ requires ver != null;
     //@ requires ver.listaAdjascencia != null;
     //@ requires ver.listaAdjascencia.size() >= 0;
@@ -53,13 +53,13 @@ public class Vertice {
         this.listaAdjascencia = new ArrayList<>(ver.listaAdjascencia);
     }
 
-    //@ also normal_behavior
+    //@ also public  normal_behavior
     //@ requires this == o;
     //@ ensures \result == true;
-    //@ also normal_behavior
+    //@ also public  normal_behavior
     //@ requires this != o && (o == null || getClass() != o.getClass());
     //@ ensures \result == false;
-    //@ also normal_behavior
+    //@ also public normal_behavior
     //@ requires this != o && !(o == null || getClass() != o.getClass());
     //@ ensures \result == (n == ((Vertice)o).n);
     //@ pure
@@ -81,7 +81,7 @@ public class Vertice {
 
     //getters e setters
 
-    //@ normal_behavior
+    //@ public normal_behavior
     //@ ensures \result == this.n;
     //@ pure
     public int getN(){
@@ -122,7 +122,7 @@ public class Vertice {
 
     //@ ensures \result == this.listaAdjascencia;
     //@ pure
-    public List<Integer> getListaAdjacencia(){
+    public List<Integer> getListaAdjascencia(){
         return this.listaAdjascencia;
     }
 }

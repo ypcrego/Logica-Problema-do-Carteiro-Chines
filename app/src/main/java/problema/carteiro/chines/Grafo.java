@@ -160,7 +160,8 @@ public class Grafo {
 
     // Getters e Setters
 
-    //@ ensures \result == this.V;
+    //@ public normal_behavior
+    //@ ensures \result == V;
     //@ pure
     public int getV() {
         return V;
@@ -192,14 +193,14 @@ public class Grafo {
         return listaVertices;
     }
 
-    //@ normal_behavior
+    //@ public normal_behavior
     //@     requires lista != null;
     //@     requires lista.size() >= 0;
     //@     requires \forall int i; 0 <= i <= lista.size(); lista.get(i) != null;
     //@     assigns this.listaVertices;
     //@     ensures \forall int i; 0 <= i < this.listaVertices.size(); this.listaVertices.get(i) == lista.get(i);
     //@     ensures \forall int i; 0 <= i < this.listaVertices.size(); this.listaVertices.get(i) != null;
-    //@ exceptional_behavior
+    //@ public exceptional_behavior
     //@     requires lista == null;
     //@     assigns \nothing;
     //@     signals_only IllegalArgumentException;

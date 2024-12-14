@@ -8,9 +8,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 // import javafx.util.Pair;
-import javafx.util.Pair;
+import java.util.AbstractMap;
 
 public class Algoritmos {
+
+    // Lema: dois vértices são adjacentes se estão na lista de adjacência um do outro
+    //@ requires x != null;
+    //@ requires y != null;
+    //@ ensures x.getListaAdjascencia().contains(y) && y.getListaAdjascencia().contains(x);
+    //@ model public pure void lemmaVerticesAdjascentes(Vertice x, Vertice y) {}
+
+    // Lema: um caminho entre dois vértices i e j é uma lista de vértices, onde o primeiro é i e o último é j, e pra cada 2 elementos dessa lista,
+    // se os índices são adjacentes, então os vértices são adjacentes
+    //@ requires i != null;
+    //@ requires j != null;
+    //@ ensures lista.get(0) == i && lista.get(lista.size()-1) == j;
+    //@ ensures \forall int x, y; 0 <= x < lista.size() && 0 <= y < lista.size(); (x == y+1 || x == y-1) ==> (lista.get(x).getListaAdjascencia().contains(lista.get(y)) && lista.get(y).getListaAdjascencia().contains(lista.get(x)));
+    //@ model public pure void lemmaCaminho(Vertice i, Vertice j, ArrayList<Vertice> lista) {}
+
+    // @ requires i != null;
+    // @ requires j != null;
+    // @ ensures 
+    // @ model public pure void lemmaVerticesConectados(Vertice i, Vertice j) {}
+    
 
     public static int PESO = 1;
 
@@ -22,9 +42,25 @@ public class Algoritmos {
      * @param ver       Vertice sendo verificado no momento
      * @param visitados Lista de vértices já visitados
      */
+    //@ requires grafo != null;
+    //@ requires ver != null;
+    //@ requires visitados != null;
+    //@ requires grafo.getListaVertices().contains(ver); // O vértice inicial deve estar no grafo
+    //@ requires (\forall Vertice v; grafo.getListaVertices().contains(v); v.listaAdjascencia != null);
+    //@ ensures (\forall Vertice v; grafo.getListaVertices().contains(v); visitados.contains(v.getN()));
     public void checarGrafoConexo(Grafo grafo, Vertice ver, List<Integer> visitados) {
-        // Para cada vértice adjascente do atual, se ele não foi visitado, visita e
-        // checa seus adjascentes
+
+        if (!visitados.contains(ver.getN())) {
+            visitados.add(ver.getN());
+        }
+
+    // Para cada vértice adjascente do atual, se ele não foi visitado, visita e
+    // checa seus adjascentes
+    // @ maintaining 0 <= \count <= visitados.size();
+    // @ maintaining (\forall int n; 0 <= n < visitados.size(); ((visitados.contains(n) ==> (\exists Vertice v; grafo.getListaVertices().contains(v); v.getN() == n))));
+    // @ maintaining 0 <=visitados.size() <= grafo.getListaVertices().size();
+    // @ loop_writes visitados;
+    // @ decreases grafo.getListaVertices().size() - visitados.size(); 
         for (Integer nVertice : ver.listaAdjascencia) {
             if (!visitados.contains(nVertice)) {
                 visitados.add(nVertice);
@@ -35,20 +71,31 @@ public class Algoritmos {
         }
     }
 
+    //@ requires grafo != null;
+    //@ requires grafo.getListaVertices() != null;
+    //@ requires (\forall int i; 0 <= i < grafo.getListaVertices().size(); (\exists int j, k; 0 <= j < grafo.getListaVertices().size() && 0 <= k < grafo.getListaVertices().size() && grafo.getListaVertices().get(k).getListaAdjascencia().contains(grafo.getListaVertices().get(j))));
+    //@ ensures \result == true;
+    //@ also
+    //@ requires grafo != null;
+    //@ requires grafo.getListaVertices() != null;
+    //@ requires (\forall int i; 0 <= i < grafo.getListaVertices().size(); !(\exists int j, k; 0 <= j < grafo.getListaVertices().size() && 0 <= k < grafo.getListaVertices().size() && grafo.getListaVertices().get(k).getListaAdjascencia().contains(grafo.getListaVertices().get(j))));
+    //@ ensures \result == false;
     public boolean eConexo(Grafo grafo){
-        boolean conexo = false;
+       boolean conexo = false;
 
         List<Integer> visitados = new ArrayList<>();
-
+        //@ assert visitados != null;
         // Verificar se é conexo
         Vertice ver = grafo.getListaVertices().get(0);
         visitados.add(ver.getN());
         checarGrafoConexo(grafo, ver, visitados);
+        //@ assert visitados != null;
         // Se todos vertices foram visitados, o grafo é conexo
-        if (visitados.size() == grafo.getV())
-            conexo = true;
-
-        return conexo;
+        if (visitados.size() == grafo.getV()) {
+        conexo = true;
+        }
+        //@ show conexo;
+        return (conexo);
     }
 
     /**
@@ -165,13 +212,13 @@ public class Algoritmos {
         }
         int nImpares = impares.size();
 
-        ArrayList<Pair<Integer, Integer>> pares = new ArrayList<>();
+        ArrayList<AbstractMap.SimpleEntry<Integer, Integer>> pares = new ArrayList<>();
         int permutacoes = impares.size() * (impares.size() - 1) / 2;
 
         // Cria lista com todos os pares possíveis para os vértices ímpares
         for (int i = 0; i < permutacoes; i++) {
             for (int j = 1; j < impares.size(); j++) {
-                Pair<Integer, Integer> par = new Pair<Integer, Integer>(impares.get(0), impares.get(j));
+                AbstractMap.SimpleEntry<Integer, Integer> par = new AbstractMap.SimpleEntry<Integer, Integer>(impares.get(0), impares.get(j));
                 pares.add(par);
             }
             impares.remove(0);
@@ -180,10 +227,10 @@ public class Algoritmos {
         }
 
 
-        ArrayList<ArrayList<Pair<Integer, Integer>>> combinacoesDePares = new ArrayList<>();
+        ArrayList<ArrayList<AbstractMap.SimpleEntry<Integer, Integer>>> combinacoesDePares = new ArrayList<>();
         int perm = pares.size() * (pares.size() - 1) / 2;
         if(pares.size() == 1){
-            ArrayList<Pair<Integer, Integer>> combinacao = new ArrayList<>();
+            ArrayList<AbstractMap.SimpleEntry<Integer, Integer>> combinacao = new ArrayList<>();
             combinacao.add(pares.get(0));// adiciona o primeiro par na primeira combinacao
             combinacoesDePares.add(combinacao);// adiciona a primeira combinacao
         }
@@ -191,7 +238,7 @@ public class Algoritmos {
         // Achar todas as combinações que passem por todos os vértices
         int nCombinacoesPar = nImpares - 3;
         for (int i = 0; i < perm; i++) {// par que será adicionado primeiro
-            ArrayList<Pair<Integer, Integer>> combinacao = new ArrayList<>();
+            ArrayList<AbstractMap.SimpleEntry<Integer, Integer>> combinacao = new ArrayList<>();
             combinacao.add(pares.get(0));                                                                               // Adiciona o par da posição 0da lista de pares
             for (int j = 1; j < pares.size(); j++) {                                                                    // Para todos os pares depois do par adicionado
                 for (int k = 0; k < combinacao.size(); k++) {                                                           // Para todos os pares presentes na combinação atual
@@ -204,7 +251,7 @@ public class Algoritmos {
                         break;
                     }
                     if (combinacoesDePares.size() > 0) {
-                        for (ArrayList<Pair<Integer, Integer>> comb : combinacoesDePares) {
+                        for (ArrayList<AbstractMap.SimpleEntry<Integer, Integer>> comb : combinacoesDePares) {
                             if (comb.contains(pares.get(0)) && comb.get(1).equals(pares.get(j))) {
                                 podeAdicionar = false;
                                 break;
@@ -320,7 +367,7 @@ public class Algoritmos {
         for (Vertice ver : grafo.getListaVertices()) {// percorre o grafo
             if (ver != fonte) {// se nao for a fonte
                 // rotulação inicial
-                if (fonte.getListaAdjacencia().contains(ver.getN())) {// se o vértice estiver a distancia de 1 da fonte
+                if (fonte.getListaAdjascencia().contains(ver.getN())) {// se o vértice estiver a distancia de 1 da fonte
                     ver.setRot(fonte.getN());// o rotulo dos vértices adjacentes a fonte é a própria fonte
                     ver.setD(1);// distancia da fonte é 1
                 } else {

@@ -91,6 +91,7 @@ public class Vertice {
     //getters e setters
 
     //@ normal_behavior
+    //@ ensures \result == this.n;
     //@ pure
     public int getN(){
         return this.n;
@@ -102,6 +103,7 @@ public class Vertice {
         this.n = num;
     }
 
+    //@ ensures \result == this.d;
     //@ pure
     public double getD(){
         return this.d;
@@ -111,6 +113,7 @@ public class Vertice {
         this.d = d;
     }
 
+    //@ ensures \result == this.rot;
     //@ pure
     public double getRot(){
         return this.rot;
@@ -120,11 +123,13 @@ public class Vertice {
         this.rot = rot;
     }
 
+    //@ ensures \result == this.listaAdjascencia.size();
     //@ pure
     public int getGrau(){
         return this.listaAdjascencia.size();
     }
 
+    //@ ensures \result == this.listaAdjascencia;
     //@ pure
     public List<Integer> getListaAdjacencia(){
         return this.listaAdjascencia;

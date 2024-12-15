@@ -7,12 +7,17 @@ import java.util.Objects;
 public class Vertice {
     //@ spec_public
     private int n; // Identificador do vértice
+    // TAG-DEBUG
+    //public int n; // Identificador do vértice
 
     //@ spec_public
     private double d;
     //@ spec_public
     private double rot;
     public List<Integer> listaAdjascencia; // Lista de vértices do vértice
+
+    // TAG-DEBUG
+    // public ArrayList<Integer> listaAdjascencia; // Lista de vértices do vértice
 
     //@ public invariant listaAdjascencia != null;
     //@ public invariant listaAdjascencia.size() >= 0;
@@ -101,7 +106,7 @@ public class Vertice {
 
     //@ public normal_behavior
     //@ ensures \result == this.n;
-    //@ pure
+    //@ pure helper
     public int getN(){
         return this.n;
     }
@@ -139,14 +144,18 @@ public class Vertice {
         this.rot = rot;
     }
 
+    //@ public normal_behavior
+    //@ ensures \result >= 0;
     //@ ensures \result == this.listaAdjascencia.size();
-    //@ pure
+    //@ pure helper
     public int getGrau(){
         return this.listaAdjascencia.size();
     }
 
     //@ ensures \result == this.listaAdjascencia;
     //@ pure
+    // TAG-DEBUG
+    //public ArrayList<Integer> getListaAdjascencia(){
     public List<Integer> getListaAdjascencia(){
         return this.listaAdjascencia;
     }

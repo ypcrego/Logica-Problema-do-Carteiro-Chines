@@ -13,18 +13,18 @@ import java.util.AbstractMap;
 public class Algoritmos {
 
     // Lema: dois vértices são adjacentes se estão na lista de adjacência um do outro
-    //@ requires x != null;
-    //@ requires y != null;
-    //@ ensures x.getListaAdjascencia().contains(y) && y.getListaAdjascencia().contains(x);
-    //@ model public pure void lemmaVerticesAdjascentes(Vertice x, Vertice y) {}
+    // @ requires x != null;
+    // @ requires y != null;
+    // @ ensures x.getListaAdjascencia().contains(y) && y.getListaAdjascencia().contains(x);
+    // @ model public pure void lemmaVerticesAdjascentes(Vertice x, Vertice y) {}
 
     // Lema: um caminho entre dois vértices i e j é uma lista de vértices onde o primeiro é i e o último é j, e pra cada 2 elementos dessa lista,
     // se os índices são adjacentes, então os vértices são adjacentes.
-    //@ requires i != null;
-    //@ requires j != null;
-    //@ ensures lista.get(0) == i && lista.get(lista.size()-1) == j;
-    //@ ensures \forall int x, y; 0 <= x < lista.size() && 0 <= y < lista.size(); (x == y+1 || x == y-1) ==> (lista.get(x).adjacente(y)) && lista.get(y).adjacente(x));
-    //@ model public pure void lemmaCaminho(Vertice i, Vertice j, ArrayList<Vertice> lista) {}
+    // @ requires i != null;
+    // @ requires j != null;
+    // @ ensures lista.get(0) == i && lista.get(lista.size()-1) == j;
+    // @ ensures \forall int x, y; 0 <= x < lista.size() && 0 <= y < lista.size(); (x == y+1 || x == y-1) ==> (lista.get(x).adjacente(y)) && lista.get(y).adjacente(x));
+    // @ model public pure void lemmaCaminho(Vertice i, Vertice j, ArrayList<Vertice> lista) {}
 
     // @ requires i != null;
     // @ requires j != null;
@@ -55,12 +55,12 @@ public class Algoritmos {
     // @ maintaining (\forall int n; 0 <= n < visitados.size(); ((visitados.contains(n) ==> (\exists Vertice v; grafo.getListaVertices().contains(v); v.getN() == n))));
     // @ loop_writes visitados;
     // @ decreases grafo.getListaVertices().size() - visitados.size(); 
-        for (Integer nVertice : ver.listaAdjascencia) {
+    for (Integer nVertice : ver.listaAdjascencia) {
             if (!visitados.contains(nVertice)) {
                 visitados.add(nVertice);
                 checarGrafoConexo(grafo,
-                        grafo.getListaVertices().get(grafo.getListaVertices().indexOf(new Vertice(nVertice))),
-                        visitados);
+                grafo.getListaVertices().get(grafo.getListaVertices().indexOf(new Vertice(nVertice))),
+                visitados);
             }
         }
     }
@@ -118,7 +118,7 @@ public class Algoritmos {
         if (visitados.size() == grafo.getV())
             conexo = true;
 
-        System.out.println("Conexo: " + conexo);
+        // System.out.println("Conexo: " + conexo);
 
         // Se conexo, verificar se todo nó tem grau par
         if (conexo) {
@@ -128,13 +128,13 @@ public class Algoritmos {
                 }
             }
         }
-        System.out.println("Grau Par: " + grauPar);
+        // System.out.println("Grau Par: " + grauPar);
 
         // Se for conexo e todo nor for par, é euleriano
         if (conexo && grauPar)
             euleriano = true;
 
-        System.out.println("Euleriano: " + euleriano);
+        // System.out.println("Euleriano: " + euleriano);
 
         return euleriano;
     }
@@ -151,9 +151,9 @@ public class Algoritmos {
     public void hierholzer(Grafo grafo, Vertice ver, List<Vertice> trilhaEuleriana) {
         for (int i = 0; i < grafo.getListaVertices().get(grafo.getListaVertices().indexOf(ver)).listaAdjascencia
                 .size(); i++) {
-            Vertice v = grafo.getListaVertices()
+                    Vertice v = grafo.getListaVertices()
                     .get(grafo.getListaVertices().indexOf(new Vertice(ver.listaAdjascencia.get(i))));
-            grafo.remAresta(ver.getN(), v.getN());
+           grafo.remAresta(ver.getN(), v.getN());
             hierholzer(grafo, v, trilhaEuleriana);
         }
         trilhaEuleriana.add(ver);
@@ -162,10 +162,10 @@ public class Algoritmos {
     public boolean algoritmoLinks(Grafo grafo) {
         boolean linkado = false;
         boolean euleriano = false;
-        System.out.println();
-        System.out.println("grafo:");
+        // System.out.println();
+        // System.out.println("grafo:");
         grafo.printGrafo();
-        System.out.println();
+        // System.out.println();
         euleriano = checarGrafoEuleriano(grafo);
 
         if (euleriano) {
@@ -173,12 +173,12 @@ public class Algoritmos {
             Vertice ver = grafo.getListaVertices().get(0);
             hierholzer(grafo, ver, trilhaEuleriana);
 
-            System.out.print("Trilha euleriana: ");
-            for (Vertice v : trilhaEuleriana) {
-                System.out.print(v.getN() + " ");
-            }
-            System.out.println();
-
+            // System.out.print("Trilha euleriana: ");
+            // for (Vertice v : trilhaEuleriana) {
+            //     System.out.print(v.getN() + " ");
+            // }
+            // System.out.println();
+       
             linkado = true;
 
             return linkado;
@@ -186,6 +186,50 @@ public class Algoritmos {
 
         return euleriano;
     }
+
+    // NAO FUNCIONA
+    //@ normal_behavior
+    //@ requires grafo != null;
+    //@ requires grafo.listaVertices != null;
+    //@ requires \forall int i; 0 <= i < grafo.listaVertices.size(); grafo.listaVertices.get(i) != null;
+    //@ requires \forall int i; 0 <= i < grafo.listaVertices.size(); grafo.listaVertices.get(i).n >= 0;
+    //@ requires \forall int i; 0 <= i < grafo.listaVertices.size(); grafo.listaVertices.get(i).listaAdjascencia.size() >= 0;
+    public ArrayList<Integer> verticesImpares(Grafo grafo) {
+
+        ArrayList<Integer> impares = new ArrayList<>();
+        int tamanho = grafo.getListaVertices().size();
+        // TAG-DEBUG int tamanho = grafo.listaVertices.size();
+
+        //@ assert impares != null;
+
+        //@ maintaining 0 <= i <= tamanho;
+        // @ maintaining \forall int j; 0 <= j < tamanho; grafo.listaVertices.get(j) != null;
+        // @ maintaining \forall int k; 0 <= k < tamanho-1; grafo.listaVertices.get(k) == \old(grafo.listaVertices.get(k)); 
+        // @ maintaining \forall int l; 0 <= l < tamanho; grafo.listaVertices.get(l) != null && grafo.listaVertices.get(l).listaAdjascencia.size() >= 0;
+        // @ maintaining \forall int m; 0 <= m < i; (grafo.listaVertices.get(m).listaAdjascencia.size() % 2 != 0) ==> (impares.contains(grafo.listaVertices.get(m).getN()));
+        //@ loop_writes impares, i;
+        //@ decreases tamanho - i;
+        for (int i = 0; i < tamanho; i++) {
+            // TAG- DEBUG
+            // Vertice ver = grafo.listaVertices.get(i);
+            // ArrayList<Integer> lista = ver.listaAdjascencia;
+
+            Vertice ver = grafo.getListaVertices().get(i);
+            List<Integer> lista = ver.listaAdjascencia;
+
+            int grau = lista.size();
+            int n = ver.getN();
+            // TAG-DEBUG int n = ver.n;
+            //@ assert grau >= 0;
+            if (grau % 2 != 0) {
+                //@ assert n >= 0;
+                impares.add(n);
+                //@ assert impares.contains(n);
+            }
+        }
+        return impares;
+    }
+
 
     /***
      * Retorna uma lista com todos os pares de vértices com grau ímpar
@@ -200,13 +244,15 @@ public class Algoritmos {
         // Verifica se o grau dos vértices é ímpar, se o vértice for ímpar adiciona na
         // lista de impares
 
-        //@ maintaining 0 <= \count <= grafo.getListaVertices().size();
-        for (Vertice ver : grafo.getListaVertices()) {
-            if (ver.getGrau() % 2 != 0) {
+        // VIROU A FUNÇÃO verticesImpares()
+        // @ maintaining 0 <= \count <= grafo.getListaVertices().size();
+
+        // for (Vertice ver : grafo.getListaVertices()) {
+        //     if (ver.getGrau() % 2 != 0) {
                 
-                impares.add(ver.getN());
-            }
-        }
+        //         impares.add(ver.getN());
+        //     }
+        // }
         int nImpares = impares.size();
 
         ArrayList<AbstractMap.SimpleEntry<Integer, Integer>> pares = new ArrayList<>();
@@ -317,11 +363,11 @@ public class Algoritmos {
         List<Vertice> trilhaEuleriana = new ArrayList<>();
         hierholzer(grafo, ver, trilhaEuleriana);
 
-        System.out.print("Trilha euleriana: ");
-        for (Vertice v : trilhaEuleriana) {
-            System.out.print(v.getN() + " ");
-        }
-        System.out.println();
+        // System.out.print("Trilha euleriana: ");
+        // for (Vertice v : trilhaEuleriana) {
+        //     System.out.print(v.getN() + " ");
+        // }
+        // System.out.println();
     }
 
     //@ ensures \forall int i; 0 <= i < lista.size(); (\result).getD() <= lista.get(i).getD();
@@ -408,6 +454,7 @@ public class Algoritmos {
         }
     */
 
+    // NÃO FUNCIONA
     // retorna o menor caminho do vértice destino até o vértice fonte depois que
     // dijkstra é executado
     //@ requires Integer.MIN_VALUE < 0 <= destino < Integer.MAX_VALUE;

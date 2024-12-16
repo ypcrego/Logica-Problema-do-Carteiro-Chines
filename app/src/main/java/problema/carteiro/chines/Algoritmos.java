@@ -8,9 +8,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 // import javafx.util.Pair;
-import javafx.util.Pair;
+import java.util.AbstractMap;
 
 public class Algoritmos {
+
+    // Lema: dois vértices são adjacentes se estão na lista de adjacência um do outro
+    // @ requires x != null;
+    // @ requires y != null;
+    // @ ensures x.getListaAdjascencia().contains(y) && y.getListaAdjascencia().contains(x);
+    // @ model public pure void lemmaVerticesAdjascentes(Vertice x, Vertice y) {}
+
+    // Lema: um caminho entre dois vértices i e j é uma lista de vértices onde o primeiro é i e o último é j, e pra cada 2 elementos dessa lista,
+    // se os índices são adjacentes, então os vértices são adjacentes.
+    // @ requires i != null;
+    // @ requires j != null;
+    // @ ensures lista.get(0) == i && lista.get(lista.size()-1) == j;
+    // @ ensures \forall int x, y; 0 <= x < lista.size() && 0 <= y < lista.size(); (x == y+1 || x == y-1) ==> (lista.get(x).adjacente(y)) && lista.get(y).adjacente(x));
+    // @ model public pure void lemmaCaminho(Vertice i, Vertice j, ArrayList<Vertice> lista) {}
+
+    // @ requires i != null;
+    // @ requires j != null;
+    // @ ensures 
+    // @ model public pure void lemmaVerticesConectados(Vertice i, Vertice j) {}
+    
 
     public static int PESO = 1;
 
@@ -22,33 +42,55 @@ public class Algoritmos {
      * @param ver       Vertice sendo verificado no momento
      * @param visitados Lista de vértices já visitados
      */
+    //@ requires grafo != null;
+    //@ requires ver != null;
+    //@ requires visitados != null;
+    //@ requires grafo.getListaVertices().contains(ver); // O vértice inicial deve estar no grafo
+    //@ requires (\forall Vertice v; grafo.getListaVertices().contains(v); v.listaAdjascencia != null);
+    //@ ensures (\forall Vertice v; grafo.getListaVertices().contains(v); visitados.contains(v.getN()));
     public void checarGrafoConexo(Grafo grafo, Vertice ver, List<Integer> visitados) {
-        // Para cada vértice adjascente do atual, se ele não foi visitado, visita e
-        // checa seus adjascentes
-        for (Integer nVertice : ver.listaAdjascencia) {
+    // Para cada vértice adjascente do atual, se ele não foi visitado, visita e checa seus adjascentes
+    // @ maintaining 0 <= \count <= visitados.size();
+    // @ maintaining 0 <= visitados.size() <= grafo.getListaVertices().size();
+    // @ maintaining (\forall int n; 0 <= n < visitados.size(); ((visitados.contains(n) ==> (\exists Vertice v; grafo.getListaVertices().contains(v); v.getN() == n))));
+    // @ loop_writes visitados;
+    // @ decreases grafo.getListaVertices().size() - visitados.size(); 
+    for (Integer nVertice : ver.listaAdjascencia) {
             if (!visitados.contains(nVertice)) {
                 visitados.add(nVertice);
                 checarGrafoConexo(grafo,
-                        grafo.getListaVertices().get(grafo.getListaVertices().indexOf(new Vertice(nVertice))),
-                        visitados);
+                grafo.getListaVertices().get(grafo.getListaVertices().indexOf(new Vertice(nVertice))),
+                visitados);
             }
         }
     }
 
+    //@ requires grafo != null;
+    //@ requires grafo.getListaVertices() != null;
+    //@ requires (\forall int i; 0 <= i < grafo.getListaVertices().size(); (\exists int j, k; 0 <= j < grafo.getListaVertices().size() && 0 <= k < grafo.getListaVertices().size() && grafo.getListaVertices().get(k).getListaAdjascencia().contains(grafo.getListaVertices().get(j))));
+    //@ ensures \result == true;
+    //@ also
+    //@ requires grafo != null;
+    //@ requires grafo.getListaVertices() != null;
+    //@ requires (\forall int i; 0 <= i < grafo.getListaVertices().size(); !(\exists int j, k; 0 <= j < grafo.getListaVertices().size() && 0 <= k < grafo.getListaVertices().size() && grafo.getListaVertices().get(k).getListaAdjascencia().contains(grafo.getListaVertices().get(j))));
+    //@ ensures \result == false;
     public boolean eConexo(Grafo grafo){
-        boolean conexo = false;
+       boolean conexo = false;
 
         List<Integer> visitados = new ArrayList<>();
-
+        //@ assert visitados != null;
         // Verificar se é conexo
         Vertice ver = grafo.getListaVertices().get(0);
         visitados.add(ver.getN());
         checarGrafoConexo(grafo, ver, visitados);
+        //@ assert visitados != null;
         // Se todos vertices foram visitados, o grafo é conexo
-        if (visitados.size() == grafo.getV())
-            conexo = true;
 
-        return conexo;
+        if (visitados.size() == grafo.getV()) {
+        conexo = true;
+        }
+        //@ show conexo;
+        return (conexo);
     }
 
     /**
@@ -76,7 +118,7 @@ public class Algoritmos {
         if (visitados.size() == grafo.getV())
             conexo = true;
 
-        System.out.println("Conexo: " + conexo);
+        // System.out.println("Conexo: " + conexo);
 
         // Se conexo, verificar se todo nó tem grau par
         if (conexo) {
@@ -86,13 +128,13 @@ public class Algoritmos {
                 }
             }
         }
-        System.out.println("Grau Par: " + grauPar);
+        // System.out.println("Grau Par: " + grauPar);
 
         // Se for conexo e todo nor for par, é euleriano
         if (conexo && grauPar)
             euleriano = true;
 
-        System.out.println("Euleriano: " + euleriano);
+        // System.out.println("Euleriano: " + euleriano);
 
         return euleriano;
     }
@@ -109,9 +151,9 @@ public class Algoritmos {
     public void hierholzer(Grafo grafo, Vertice ver, List<Vertice> trilhaEuleriana) {
         for (int i = 0; i < grafo.getListaVertices().get(grafo.getListaVertices().indexOf(ver)).listaAdjascencia
                 .size(); i++) {
-            Vertice v = grafo.getListaVertices()
+                    Vertice v = grafo.getListaVertices()
                     .get(grafo.getListaVertices().indexOf(new Vertice(ver.listaAdjascencia.get(i))));
-            grafo.remAresta(ver.getN(), v.getN());
+           grafo.remAresta(ver.getN(), v.getN());
             hierholzer(grafo, v, trilhaEuleriana);
         }
         trilhaEuleriana.add(ver);
@@ -120,10 +162,10 @@ public class Algoritmos {
     public boolean algoritmoLinks(Grafo grafo) {
         boolean linkado = false;
         boolean euleriano = false;
-        System.out.println();
-        System.out.println("grafo:");
+        // System.out.println();
+        // System.out.println("grafo:");
         grafo.printGrafo();
-        System.out.println();
+        // System.out.println();
         euleriano = checarGrafoEuleriano(grafo);
 
         if (euleriano) {
@@ -131,12 +173,12 @@ public class Algoritmos {
             Vertice ver = grafo.getListaVertices().get(0);
             hierholzer(grafo, ver, trilhaEuleriana);
 
-            System.out.print("Trilha euleriana: ");
-            for (Vertice v : trilhaEuleriana) {
-                System.out.print(v.getN() + " ");
-            }
-            System.out.println();
-
+            // System.out.print("Trilha euleriana: ");
+            // for (Vertice v : trilhaEuleriana) {
+            //     System.out.print(v.getN() + " ");
+            // }
+            // System.out.println();
+       
             linkado = true;
 
             return linkado;
@@ -144,6 +186,50 @@ public class Algoritmos {
 
         return euleriano;
     }
+
+    // NAO FUNCIONA
+    //@ normal_behavior
+    //@ requires grafo != null;
+    //@ requires grafo.listaVertices != null;
+    //@ requires \forall int i; 0 <= i < grafo.listaVertices.size(); grafo.listaVertices.get(i) != null;
+    //@ requires \forall int i; 0 <= i < grafo.listaVertices.size(); grafo.listaVertices.get(i).n >= 0;
+    //@ requires \forall int i; 0 <= i < grafo.listaVertices.size(); grafo.listaVertices.get(i).listaAdjascencia.size() >= 0;
+    public ArrayList<Integer> verticesImpares(Grafo grafo) {
+
+        ArrayList<Integer> impares = new ArrayList<>();
+        int tamanho = grafo.getListaVertices().size();
+        // TAG-DEBUG int tamanho = grafo.listaVertices.size();
+
+        //@ assert impares != null;
+
+        //@ maintaining 0 <= i <= tamanho;
+        // @ maintaining \forall int j; 0 <= j < tamanho; grafo.listaVertices.get(j) != null;
+        // @ maintaining \forall int k; 0 <= k < tamanho-1; grafo.listaVertices.get(k) == \old(grafo.listaVertices.get(k)); 
+        // @ maintaining \forall int l; 0 <= l < tamanho; grafo.listaVertices.get(l) != null && grafo.listaVertices.get(l).listaAdjascencia.size() >= 0;
+        // @ maintaining \forall int m; 0 <= m < i; (grafo.listaVertices.get(m).listaAdjascencia.size() % 2 != 0) ==> (impares.contains(grafo.listaVertices.get(m).getN()));
+        //@ loop_writes impares, i;
+        //@ decreases tamanho - i;
+        for (int i = 0; i < tamanho; i++) {
+            // TAG- DEBUG
+            // Vertice ver = grafo.listaVertices.get(i);
+            // ArrayList<Integer> lista = ver.listaAdjascencia;
+
+            Vertice ver = grafo.getListaVertices().get(i);
+            List<Integer> lista = ver.listaAdjascencia;
+
+            int grau = lista.size();
+            int n = ver.getN();
+            // TAG-DEBUG int n = ver.n;
+            //@ assert grau >= 0;
+            if (grau % 2 != 0) {
+                //@ assert n >= 0;
+                impares.add(n);
+                //@ assert impares.contains(n);
+            }
+        }
+        return impares;
+    }
+
 
     /***
      * Retorna uma lista com todos os pares de vértices com grau ímpar
@@ -157,21 +243,25 @@ public class Algoritmos {
 
         // Verifica se o grau dos vértices é ímpar, se o vértice for ímpar adiciona na
         // lista de impares
-        for (Vertice ver : grafo.getListaVertices()) {
-            if (ver.getGrau() % 2 != 0) {
+
+        // VIROU A FUNÇÃO verticesImpares()
+        // @ maintaining 0 <= \count <= grafo.getListaVertices().size();
+
+        // for (Vertice ver : grafo.getListaVertices()) {
+        //     if (ver.getGrau() % 2 != 0) {
                 
-                impares.add(ver.getN());
-            }
-        }
+        //         impares.add(ver.getN());
+        //     }
+        // }
         int nImpares = impares.size();
 
-        ArrayList<Pair<Integer, Integer>> pares = new ArrayList<>();
+        ArrayList<AbstractMap.SimpleEntry<Integer, Integer>> pares = new ArrayList<>();
         int permutacoes = impares.size() * (impares.size() - 1) / 2;
 
         // Cria lista com todos os pares possíveis para os vértices ímpares
         for (int i = 0; i < permutacoes; i++) {
             for (int j = 1; j < impares.size(); j++) {
-                Pair<Integer, Integer> par = new Pair<Integer, Integer>(impares.get(0), impares.get(j));
+                AbstractMap.SimpleEntry<Integer, Integer> par = new AbstractMap.SimpleEntry<Integer, Integer>(impares.get(0), impares.get(j));
                 pares.add(par);
             }
             impares.remove(0);
@@ -180,10 +270,10 @@ public class Algoritmos {
         }
 
 
-        ArrayList<ArrayList<Pair<Integer, Integer>>> combinacoesDePares = new ArrayList<>();
+        ArrayList<ArrayList<AbstractMap.SimpleEntry<Integer, Integer>>> combinacoesDePares = new ArrayList<>();
         int perm = pares.size() * (pares.size() - 1) / 2;
         if(pares.size() == 1){
-            ArrayList<Pair<Integer, Integer>> combinacao = new ArrayList<>();
+            ArrayList<AbstractMap.SimpleEntry<Integer, Integer>> combinacao = new ArrayList<>();
             combinacao.add(pares.get(0));// adiciona o primeiro par na primeira combinacao
             combinacoesDePares.add(combinacao);// adiciona a primeira combinacao
         }
@@ -191,7 +281,7 @@ public class Algoritmos {
         // Achar todas as combinações que passem por todos os vértices
         int nCombinacoesPar = nImpares - 3;
         for (int i = 0; i < perm; i++) {// par que será adicionado primeiro
-            ArrayList<Pair<Integer, Integer>> combinacao = new ArrayList<>();
+            ArrayList<AbstractMap.SimpleEntry<Integer, Integer>> combinacao = new ArrayList<>();
             combinacao.add(pares.get(0));                                                                               // Adiciona o par da posição 0da lista de pares
             for (int j = 1; j < pares.size(); j++) {                                                                    // Para todos os pares depois do par adicionado
                 for (int k = 0; k < combinacao.size(); k++) {                                                           // Para todos os pares presentes na combinação atual
@@ -204,7 +294,7 @@ public class Algoritmos {
                         break;
                     }
                     if (combinacoesDePares.size() > 0) {
-                        for (ArrayList<Pair<Integer, Integer>> comb : combinacoesDePares) {
+                        for (ArrayList<AbstractMap.SimpleEntry<Integer, Integer>> comb : combinacoesDePares) {
                             if (comb.contains(pares.get(0)) && comb.get(1).equals(pares.get(j))) {
                                 podeAdicionar = false;
                                 break;
@@ -255,7 +345,7 @@ public class Algoritmos {
             for (int i = 0; i < combinacoesDePares.get(menor).size(); i++) {
                 dijkstra(grafo, grafo.getListaVertices().get(combinacoesDePares.get(menor).get(i).getKey() - 1));
                 caminhosGerados.add(
-                        calculaCaminho(grafo, combinacoesDePares.get(menor).get(i).getKey(),
+                        calculaMenorCaminho(grafo, combinacoesDePares.get(menor).get(i).getKey(),
                                 combinacoesDePares.get(menor).get(i).getValue()));
                
             }
@@ -273,17 +363,22 @@ public class Algoritmos {
         List<Vertice> trilhaEuleriana = new ArrayList<>();
         hierholzer(grafo, ver, trilhaEuleriana);
 
-        System.out.print("Trilha euleriana: ");
-        for (Vertice v : trilhaEuleriana) {
-            System.out.print(v.getN() + " ");
-        }
-        System.out.println();
+        // System.out.print("Trilha euleriana: ");
+        // for (Vertice v : trilhaEuleriana) {
+        //     System.out.print(v.getN() + " ");
+        // }
+        // System.out.println();
     }
 
+    //@ ensures \forall int i; 0 <= i < lista.size(); (\result).getD() <= lista.get(i).getD();
     // retorna o vértice com menor distância em uma lista de vértices
     public Vertice menorD(ArrayList<Vertice> lista) {
         Vertice m = lista.get(0);
-
+        //@ assert m != null;
+        //@ maintaining 0 <= i <= lista.size();
+        //@ maintaining \forall int j;  0 <= j < i; m.getD() <= lista.get(j).getD();
+        //@ loop_writes i, m;
+        //@ decreases lista.size() - i;
         for (int i = 0; i < lista.size(); i++) {
             if (lista.get(i).getD() < m.getD()) {
                 m = lista.get(i);
@@ -320,7 +415,7 @@ public class Algoritmos {
         for (Vertice ver : grafo.getListaVertices()) {// percorre o grafo
             if (ver != fonte) {// se nao for a fonte
                 // rotulação inicial
-                if (fonte.getListaAdjacencia().contains(ver.getN())) {// se o vértice estiver a distancia de 1 da fonte
+                if (fonte.getListaAdjascencia().contains(ver.getN())) {// se o vértice estiver a distancia de 1 da fonte
                     ver.setRot(fonte.getN());// o rotulo dos vértices adjacentes a fonte é a própria fonte
                     ver.setD(1);// distancia da fonte é 1
                 } else {
@@ -352,19 +447,32 @@ public class Algoritmos {
        
     }
 
+    /* public boolean temCaminho(Grafo grafo, int v1, int v2){
+            for (int i = 0; i < grafo.getListaVertices.size(); i++) {
+            }
+            return false;
+        }
+    */
+
+    // NÃO FUNCIONA
     // retorna o menor caminho do vértice destino até o vértice fonte depois que
     // dijkstra é executado
-    public ArrayList<Integer> calculaCaminho(Grafo grafo, Integer fonte, Integer destino) {
+    //@ requires Integer.MIN_VALUE < 0 <= destino < Integer.MAX_VALUE;
+    //@ requires \forall int i; 0 <= i < grafo.getListaVertices().size(); grafo.getListaVertices().get(i).getRot() >= 0;
+    public ArrayList<Integer> calculaMenorCaminho(Grafo grafo, Integer fonte, int destino) {
 
         ArrayList<Integer> caminho = new ArrayList<>();
         caminho.add(destino);
-        Integer i = destino;// posicao atual
 
-        while (grafo.getListaVertices().get(i - 1).getRot() != fonte) {// enquanto não chegar em fonte
-            double rotulo = grafo.getListaVertices().get(i - 1).getRot();
-            i = (int) rotulo;
+        while (grafo.getListaVertices().get(destino-1).getRot() != fonte) {// enquanto não chegar em fonte
+            double rotulo = grafo.getListaVertices().get(destino - 1).getRot();
+
+            if (rotulo-1 >= Integer.MIN_VALUE) {
+                destino = (int) rotulo;
+                //@ assert (destino-1) >= Integer.MIN_VALUE;
+            }
             
-            caminho.add(i);
+            caminho.add(destino);
         }
 
         caminho.add(fonte);

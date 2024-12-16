@@ -7,6 +7,8 @@ import java.util.Objects;
 public class Vertice {
     //@ spec_public
     private int n; // Identificador do vértice
+    // TAG-DEBUG
+    //public int n; // Identificador do vértice
 
     //@ spec_public
     private double d;
@@ -14,11 +16,14 @@ public class Vertice {
     private double rot;
     public List<Integer> listaAdjascencia; // Lista de vértices do vértice
 
+    // TAG-DEBUG
+    // public ArrayList<Integer> listaAdjascencia; // Lista de vértices do vértice
+
     //@ public invariant listaAdjascencia != null;
     //@ public invariant listaAdjascencia.size() >= 0;
     //@ public invariant n >= 0;
 
-    //@ normal_behavior
+    //@ public normal_behavior
     //@ requires num >= 0;
     //@ ensures this.listaAdjascencia.size() == 0;
     //@ ensures this.listaAdjascencia != null;
@@ -30,7 +35,7 @@ public class Vertice {
         this.n = num;
         this.listaAdjascencia = new ArrayList<>();
     }
-    //@ normal_behavior
+    //@ public normal_behavior
     //@ requires ver != null;
     //@ requires ver.listaAdjascencia != null;
     //@ requires ver.listaAdjascencia.size() >= 0;
@@ -71,6 +76,16 @@ public class Vertice {
         return false;
     }
 
+    //@ also public  normal_behavior
+    //@ requires this == o;
+    //@ ensures \result == true;
+    //@ also public  normal_behavior
+    //@ requires this != o && (o == null || getClass() != o.getClass());
+    //@ ensures \result == false;
+    //@ also public normal_behavior
+    //@ requires this != o && !(o == null || getClass() != o.getClass());
+    //@ ensures \result == (n == ((Vertice)o).n);
+    //@ pure
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -79,8 +94,7 @@ public class Vertice {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Vertice vertice = (Vertice) o;
-        return n == vertice.n;
+        return n == ((Vertice)o).n;
     }
 
     // @Override //comentado pois não é necessário para o funcionamento do código
@@ -90,9 +104,9 @@ public class Vertice {
 
     //getters e setters
 
-    //@ normal_behavior
+    //@ public normal_behavior
     //@ ensures \result == this.n;
-    //@ pure
+    //@ pure helper
     public int getN(){
         return this.n;
     }
@@ -130,15 +144,20 @@ public class Vertice {
         this.rot = rot;
     }
 
+    //@ public normal_behavior
+    //@ ensures \result >= 0;
     //@ ensures \result == this.listaAdjascencia.size();
-    //@ pure
+    //@ pure helper
     public int getGrau(){
         return this.listaAdjascencia.size();
     }
 
     //@ ensures \result == this.listaAdjascencia;
     //@ pure
-    public List<Integer> getListaAdjacencia(){
+    // TAG-DEBUG
+    //public ArrayList<Integer> getListaAdjascencia(){
+    public List<Integer> getListaAdjascencia(){
         return this.listaAdjascencia;
     }
+
 }

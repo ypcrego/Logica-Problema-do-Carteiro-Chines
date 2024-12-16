@@ -13,6 +13,9 @@ public class Grafo {
     private int L = 0; // Número de arestas
     //@ spec_public
     private List<Vertice> listaVertices = new ArrayList<Vertice>();
+    // TAG-DEBUG.
+    // public List<Vertice> listaVertices = new ArrayList<Vertice>();
+
 
     //@ public invariant listaVertices != null;
     //@ public invariant listaVertices.size() >= 0;
@@ -37,14 +40,11 @@ public class Grafo {
     //@ ensures this.V == \old(V) + 1;
     void addVertice(int v) {
         //@ assert v >= 0;
-        boolean existe = false;
-        existe = verticeExiste(v);
-        if (!existe) {
-            Vertice helper = new Vertice(v);
-            //@ assert helper != null;
-            listaVertices.add(helper);
-            //@ assert v >= 0;
-            //@ assert listaVertices.contains(helper);
+        if (!verticeExiste(v)) {
+            Vertice vertice = new Vertice(v);
+            //@ assert vertice != null;
+            listaVertices.add(vertice);
+            //@ assert listaVertices.contains(vertice);
             this.V++;
             //@ assert listaVertices.size() == \old(listaVertices.size()) + 1;
             //@ assert this.V == \old(V) + 1;
@@ -172,7 +172,8 @@ public class Grafo {
 
     // Getters e Setters
 
-    //@ ensures \result == this.V;
+    //@ public normal_behavior
+    //@ ensures \result == V;
     //@ pure
     public int getV() {
         return V;
@@ -198,20 +199,22 @@ public class Grafo {
         L = l;
     }
 
-    //@ ensures \result == this.listaVertices;
+    //@ public normal_behavior
+    //@ ensures \result != null;
+    //@ ensures \result == listaVertices;
     //@ pure
     public List<Vertice> getListaVertices() {
         return listaVertices;
     }
 
-    //@ normal_behavior
+    //@ public normal_behavior
     //@     requires lista != null;
     //@     requires lista.size() >= 0;
     //@     requires \forall int i; 0 <= i <= lista.size(); lista.get(i) != null;
     //@     assigns this.listaVertices;
     //@     ensures \forall int i; 0 <= i < this.listaVertices.size(); this.listaVertices.get(i) == lista.get(i);
     //@     ensures \forall int i; 0 <= i < this.listaVertices.size(); this.listaVertices.get(i) != null;
-    //@ exceptional_behavior
+    //@ public exceptional_behavior
     //@     requires lista == null;
     //@     assigns \nothing;
     //@     signals_only IllegalArgumentException;
@@ -238,4 +241,31 @@ public class Grafo {
             this.listaVertices.add(v);
         }
     }
+
+    // /**
+    //  * Retorna um vértice dado seu identificador
+    //  * @param n
+    //  * @return
+    //  */
+    // //@ normal_behavior
+    // //@ requires n >= 0;
+    // //@ ensures \result == this.listaVertices.get(n);
+    // //@ ensures \result != null;
+    // //@ pure helper
+    // public Vertice getVertice(int n) {
+    //     Vertice vertice = new Vertice(n);
+    //     return this.listaVertices.get(this.listaVertices.indexOf(vertice));
+    // }
+
+    // /**
+    //  * Retorna a ordem (número de vértices) do grafo
+    //  */
+    // //@ normal_behavior
+    // //@ ensures \result >= 0;
+    // //@ ensures \result == this.listaVertices.size();
+    // //@ pure helper
+    // public int getOrdem() {
+    //     return this.listaVertices.size();
+    // }
+
 }

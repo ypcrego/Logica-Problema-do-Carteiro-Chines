@@ -5,8 +5,11 @@ package problema.carteiro.chines;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Queue;
 // import javafx.util.Pair;
 import java.util.AbstractMap;
 
@@ -31,6 +34,53 @@ public class Algoritmos {
     // @ ensures 
     // @ model public pure void lemmaVerticesConectados(Vertice i, Vertice j) {}
     
+
+
+    // BFS genérico que retorna os vértices visitados
+    //@ requires grafo != null;
+    //@ requires verticeInicial != null;
+    //@ ensures \result != null;
+    //@ ensures (\forall int v; \result.contains(v) ==> (\exists Vertice u; grafo.getListaVertices().contains(u) && u.getN() == v));
+    //@ ensures \result.contains(verticeInicial.getN());
+    public List<Integer> bfs(Grafo grafo, Vertice verticeInicial) {
+        List<Integer> visitados = new ArrayList<>();
+        // assert visitados != null;
+        Queue<Vertice> fila = new LinkedList<>();
+         // assert fila != null;
+
+        fila.add(verticeInicial);
+        visitados.add(verticeInicial.getN());
+
+        //@ maintaining !fila.isEmpty() ==> (\forall Vertice v; fila.contains(v) ==> !visitados.contains(v.getN()));
+        //@ maintaining (\forall Vertice u; visitados.contains(u.getN()) ==> grafo.getListaVertices().contains(u));
+        //@ loop_writes fila, visitados;
+        //@ decreases fila.size();
+        while (!fila.isEmpty()) {
+            Vertice atual = fila.poll(); // Remove o próximo da fila
+
+        /*@
+        @ maintaining 0 <= i <= atual.listaAdjascencia.size();
+        @ maintaining (\forall int j; 0 <= j < i ==> visitados.contains(atual.listaAdjascencia.get(j)) || (\exists Vertice v; grafo.getListaVertices().contains(v) && v.getN() == atual.listaAdjascencia.get(j) && fila.contains(v)));
+        @ loop_invariant visitados != null && fila != null;
+        @ loop_writes fila, visitados;
+        @ decreases atual.listaAdjascencia.size() - i;
+        @*/
+        for (int i = 0; i < atual.listaAdjascencia.size(); i++) {
+            Integer nVertice = atual.listaAdjascencia.get(i);
+            Vertice adjacente = grafo.getListaVertices()
+                    .get(grafo.getListaVertices().indexOf(new Vertice(nVertice)));
+
+            // Se ainda não foi visitado, adiciona à fila e marca como visitado
+            if (!visitados.contains(adjacente.getN())) {
+                fila.add(adjacente);
+                visitados.add(adjacente.getN());
+            }
+        }
+            }
+
+        return visitados; // Retorna a lista de vértices visitados
+    }
+
 
     public static int PESO = 1;
 

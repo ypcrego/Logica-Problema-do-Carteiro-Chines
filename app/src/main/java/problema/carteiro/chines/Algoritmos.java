@@ -5,8 +5,12 @@ package problema.carteiro.chines;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Queue;
+import java.util.Stack;
 // import javafx.util.Pair;
 import java.util.AbstractMap;
 
@@ -31,8 +35,112 @@ public class Algoritmos {
     // @ ensures 
     // @ model public pure void lemmaVerticesConectados(Vertice i, Vertice j) {}
     
-
     public static int PESO = 1;
+
+    // Busca em largura que retorna os indices dos vertices visitados
+    /*@
+    @ requires grafo != null;
+    @ requires verticeInicial != null;
+    @ ensures \result != null;
+    // Para cara índice v na lista resultante, existe um Vértice u com índice v na lista de vértices do grafo.
+    @ ensures (\forall int v; \result.contains(v) ==> (\exists Vertice u; grafo.getListaVertices().contains(u) && u.getN() == v));
+    @ ensures \result.contains(verticeInicial.getN());
+    @*/
+    public List<Integer> bfs(Grafo grafo, Vertice verticeInicial) {
+        List<Integer> visitados = new ArrayList<>();
+        // assert visitados != null;
+        Queue<Vertice> fila = new LinkedList<>();
+         // assert fila != null;
+
+        fila.add(verticeInicial);
+        visitados.add(verticeInicial.getN());
+
+        //@ maintaining !fila.isEmpty() ==> (\forall Vertice v; fila.contains(v) ==> !visitados.contains(v.getN()));
+        //@ maintaining (\forall Vertice u; visitados.contains(u.getN()) ==> grafo.getListaVertices().contains(u));
+        //@ loop_writes fila, visitados;
+        //@ decreases fila.size();
+        while (!fila.isEmpty()) {
+            Vertice atual = fila.poll(); // Remove o próximo da fila
+
+        /*@
+        @ maintaining 0 <= i <= atual.listaAdjascencia.size();
+        // (todos os vértices adjacentes já processados (índices menores que i) ou foram visitados ou estão na fila para serem visitados)
+        @ maintaining (\forall int j; 0 <= j < i ==> visitados.contains(atual.listaAdjascencia.get(j)) || (\exists Vertice v; grafo.getListaVertices().contains(v) && v.getN() == atual.listaAdjascencia.get(j) && fila.contains(v)));
+        @ maintaining visitados != null && fila != null;
+        @ loop_writes fila, visitados;
+        @ decreases atual.listaAdjascencia.size() - i;
+        @*/
+        for (int i = 0; i < atual.listaAdjascencia.size(); i++) {
+            Integer nVertice = atual.listaAdjascencia.get(i);
+            Vertice adjacente = grafo.getListaVertices()
+                    .get(grafo.getListaVertices().indexOf(new Vertice(nVertice)));
+            //@ assert adjacente != null;
+
+            // Se ainda não foi visitado, adiciona à fila e marca como visitado
+            if (!visitados.contains(adjacente.getN())) {
+                fila.add(adjacente);
+                //@ assert fila.contains(adjacente);
+                visitados.add(adjacente.getN());
+                //@ assert visitados.contains(adjacente.getN());
+            }
+        }
+            }
+
+        return visitados; // Retorna a lista de indices dos vértices visitados
+    }
+
+    // Busca em profundidade que retorna os índices dos vértices visitados
+    /*@
+    @ requires grafo != null;
+    @ requires verticeInicial != null;
+    @ ensures \result != null;
+    // Para cada índice v na lista resultante, existe um Vértice u com índice v na lista de vértices do grafo.
+    @ ensures (\forall int v; \result.contains(v) ==> (\exists Vertice u; grafo.getListaVertices().contains(u) && u.getN() == v));
+    @ ensures \result.contains(verticeInicial.getN());
+    @*/
+    public List<Integer> dfs(Grafo grafo, Vertice verticeInicial) {
+        List<Integer> visitados = new ArrayList<>();
+        Stack<Vertice> pilha = new Stack<>();
+        // assert visitados != null;
+        // assert pilha != null;
+
+        pilha.push(verticeInicial);
+        visitados.add(verticeInicial.getN());
+
+        //@ maintaining !pilha.isEmpty() ==> (\forall Vertice v; pilha.contains(v) ==> !visitados.contains(v.getN()));
+        //@ maintaining (\forall Vertice u; visitados.contains(u.getN()) ==> grafo.getListaVertices().contains(u));
+        //@ loop_writes pilha, visitados;
+        //@ decreases pilha.size();
+        while (!pilha.isEmpty()) {
+            Vertice atual = pilha.pop(); // Remove o próximo da pilha
+
+            /*@
+            @ maintaining 0 <= i <= atual.listaAdjascencia.size();
+            // (todos os vértices adjacentes já processados (índices menores que i) ou foram visitados ou estão na pilha para serem visitados)
+            @ maintaining (\forall int j; 0 <= j < i ==> visitados.contains(atual.listaAdjascencia.get(j)) || (\exists Vertice v; grafo.getListaVertices().contains(v) && v.getN() == atual.listaAdjascencia.get(j) && pilha.contains(v)));
+            @ maintaining visitados != null && pilha != null;
+            @ loop_writes pilha, visitados;
+            @ decreases atual.listaAdjascencia.size() - i;
+            @*/
+            for (int i = 0; i < atual.listaAdjascencia.size(); i++) {
+                Integer nVertice = atual.listaAdjascencia.get(i);
+                Vertice adjacente = grafo.getListaVertices()
+                        .get(grafo.getListaVertices().indexOf(new Vertice(nVertice)));
+                //@ assert adjacente != null;
+
+                // Se ainda não foi visitado, adiciona à pilha e marca como visitado
+                if (!visitados.contains(adjacente.getN())) {
+                    pilha.push(adjacente);
+                    //@ assert pilha.contains(adjacente);
+                    visitados.add(adjacente.getN());
+                    //@ assert visitados.contains(adjacente.getN());
+                }
+            }
+        }
+
+        return visitados; // Retorna a lista de índices dos vértices visitados
+    }
+
 
     /**
      * Função que checa se o grafo é conexo.
@@ -42,12 +150,12 @@ public class Algoritmos {
      * @param ver       Vertice sendo verificado no momento
      * @param visitados Lista de vértices já visitados
      */
-    //@ requires grafo != null;
-    //@ requires ver != null;
-    //@ requires visitados != null;
-    //@ requires grafo.getListaVertices().contains(ver); // O vértice inicial deve estar no grafo
-    //@ requires (\forall Vertice v; grafo.getListaVertices().contains(v); v.listaAdjascencia != null);
-    //@ ensures (\forall Vertice v; grafo.getListaVertices().contains(v); visitados.contains(v.getN()));
+    // @ requires grafo != null;
+    // @ requires ver != null;
+    // @ requires visitados != null;
+    // @ requires grafo.getListaVertices().contains(ver); // O vértice inicial deve estar no grafo
+    // @ requires (\forall Vertice v; grafo.getListaVertices().contains(v); v.listaAdjascencia != null);
+    // @ ensures (\forall Vertice v; grafo.getListaVertices().contains(v); visitados.contains(v.getN()));
     public void checarGrafoConexo(Grafo grafo, Vertice ver, List<Integer> visitados) {
     // Para cada vértice adjascente do atual, se ele não foi visitado, visita e checa seus adjascentes
     // @ maintaining 0 <= \count <= visitados.size();
@@ -65,31 +173,31 @@ public class Algoritmos {
         }
     }
 
-    //@ requires grafo != null;
-    //@ requires grafo.getListaVertices() != null;
-    //@ requires (\forall int i; 0 <= i < grafo.getListaVertices().size(); (\exists int j, k; 0 <= j < grafo.getListaVertices().size() && 0 <= k < grafo.getListaVertices().size() && grafo.getListaVertices().get(k).getListaAdjascencia().contains(grafo.getListaVertices().get(j))));
-    //@ ensures \result == true;
-    //@ also
-    //@ requires grafo != null;
-    //@ requires grafo.getListaVertices() != null;
-    //@ requires (\forall int i; 0 <= i < grafo.getListaVertices().size(); !(\exists int j, k; 0 <= j < grafo.getListaVertices().size() && 0 <= k < grafo.getListaVertices().size() && grafo.getListaVertices().get(k).getListaAdjascencia().contains(grafo.getListaVertices().get(j))));
-    //@ ensures \result == false;
+    // @ requires grafo != null;
+    // @ requires grafo.getListaVertices() != null;
+    // @ requires (\forall int i; 0 <= i < grafo.getListaVertices().size(); (\exists int j, k; 0 <= j < grafo.getListaVertices().size() && 0 <= k < grafo.getListaVertices().size() && grafo.getListaVertices().get(k).getListaAdjascencia().contains(grafo.getListaVertices().get(j))));
+    // @ ensures \result == true;
+    // @ also
+    // @ requires grafo != null;
+    // @ requires grafo.getListaVertices() != null;
+    // @ requires (\forall int i; 0 <= i < grafo.getListaVertices().size(); !(\exists int j, k; 0 <= j < grafo.getListaVertices().size() && 0 <= k < grafo.getListaVertices().size() && grafo.getListaVertices().get(k).getListaAdjascencia().contains(grafo.getListaVertices().get(j))));
+    // @ ensures \result == false;
     public boolean eConexo(Grafo grafo){
        boolean conexo = false;
 
         List<Integer> visitados = new ArrayList<>();
-        //@ assert visitados != null;
+        // @ assert visitados != null;
         // Verificar se é conexo
         Vertice ver = grafo.getListaVertices().get(0);
         visitados.add(ver.getN());
         checarGrafoConexo(grafo, ver, visitados);
-        //@ assert visitados != null;
+        // @ assert visitados != null;
         // Se todos vertices foram visitados, o grafo é conexo
 
         if (visitados.size() == grafo.getV()) {
         conexo = true;
         }
-        //@ show conexo;
+        // @ show conexo;
         return (conexo);
     }
 
@@ -188,27 +296,27 @@ public class Algoritmos {
     }
 
     // NAO FUNCIONA
-    //@ normal_behavior
-    //@ requires grafo != null;
-    //@ requires grafo.listaVertices != null;
-    //@ requires \forall int i; 0 <= i < grafo.listaVertices.size(); grafo.listaVertices.get(i) != null;
-    //@ requires \forall int i; 0 <= i < grafo.listaVertices.size(); grafo.listaVertices.get(i).n >= 0;
-    //@ requires \forall int i; 0 <= i < grafo.listaVertices.size(); grafo.listaVertices.get(i).listaAdjascencia.size() >= 0;
+    // @ normal_behavior
+    // @ requires grafo != null;
+    // @ requires grafo.listaVertices != null;
+    // @ requires \forall int i; 0 <= i < grafo.listaVertices.size(); grafo.listaVertices.get(i) != null;
+    // @ requires \forall int i; 0 <= i < grafo.listaVertices.size(); grafo.listaVertices.get(i).n >= 0;
+    // @ requires \forall int i; 0 <= i < grafo.listaVertices.size(); grafo.listaVertices.get(i).listaAdjascencia.size() >= 0;
     public ArrayList<Integer> verticesImpares(Grafo grafo) {
 
         ArrayList<Integer> impares = new ArrayList<>();
         int tamanho = grafo.getListaVertices().size();
         // TAG-DEBUG int tamanho = grafo.listaVertices.size();
 
-        //@ assert impares != null;
+        // @ assert impares != null;
 
-        //@ maintaining 0 <= i <= tamanho;
+        // @ maintaining 0 <= i <= tamanho;
         // @ maintaining \forall int j; 0 <= j < tamanho; grafo.listaVertices.get(j) != null;
         // @ maintaining \forall int k; 0 <= k < tamanho-1; grafo.listaVertices.get(k) == \old(grafo.listaVertices.get(k)); 
         // @ maintaining \forall int l; 0 <= l < tamanho; grafo.listaVertices.get(l) != null && grafo.listaVertices.get(l).listaAdjascencia.size() >= 0;
         // @ maintaining \forall int m; 0 <= m < i; (grafo.listaVertices.get(m).listaAdjascencia.size() % 2 != 0) ==> (impares.contains(grafo.listaVertices.get(m).getN()));
-        //@ loop_writes impares, i;
-        //@ decreases tamanho - i;
+        // @ loop_writes impares, i;
+        // @ decreases tamanho - i;
         for (int i = 0; i < tamanho; i++) {
             // TAG- DEBUG
             // Vertice ver = grafo.listaVertices.get(i);
@@ -220,11 +328,11 @@ public class Algoritmos {
             int grau = lista.size();
             int n = ver.getN();
             // TAG-DEBUG int n = ver.n;
-            //@ assert grau >= 0;
+            // @ assert grau >= 0;
             if (grau % 2 != 0) {
-                //@ assert n >= 0;
+                // @ assert n >= 0;
                 impares.add(n);
-                //@ assert impares.contains(n);
+                // @ assert impares.contains(n);
             }
         }
         return impares;
@@ -370,6 +478,7 @@ public class Algoritmos {
         // System.out.println();
     }
 
+    //@ requires lista != null;
     //@ ensures \forall int i; 0 <= i < lista.size(); (\result).getD() <= lista.get(i).getD();
     // retorna o vértice com menor distância em uma lista de vértices
     public Vertice menorD(ArrayList<Vertice> lista) {
@@ -457,8 +566,8 @@ public class Algoritmos {
     // NÃO FUNCIONA
     // retorna o menor caminho do vértice destino até o vértice fonte depois que
     // dijkstra é executado
-    //@ requires Integer.MIN_VALUE < 0 <= destino < Integer.MAX_VALUE;
-    //@ requires \forall int i; 0 <= i < grafo.getListaVertices().size(); grafo.getListaVertices().get(i).getRot() >= 0;
+    // @ requires Integer.MIN_VALUE < 0 <= destino < Integer.MAX_VALUE;
+    // @ requires \forall int i; 0 <= i < grafo.getListaVertices().size(); grafo.getListaVertices().get(i).getRot() >= 0;
     public ArrayList<Integer> calculaMenorCaminho(Grafo grafo, Integer fonte, int destino) {
 
         ArrayList<Integer> caminho = new ArrayList<>();
@@ -469,7 +578,7 @@ public class Algoritmos {
 
             if (rotulo-1 >= Integer.MIN_VALUE) {
                 destino = (int) rotulo;
-                //@ assert (destino-1) >= Integer.MIN_VALUE;
+                // @ assert (destino-1) >= Integer.MIN_VALUE;
             }
             
             caminho.add(destino);

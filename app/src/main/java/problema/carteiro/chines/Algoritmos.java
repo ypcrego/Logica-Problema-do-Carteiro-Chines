@@ -36,12 +36,15 @@ public class Algoritmos {
     
 
 
-    // BFS genérico que retorna os vértices visitados
-    //@ requires grafo != null;
-    //@ requires verticeInicial != null;
-    //@ ensures \result != null;
-    //@ ensures (\forall int v; \result.contains(v) ==> (\exists Vertice u; grafo.getListaVertices().contains(u) && u.getN() == v));
-    //@ ensures \result.contains(verticeInicial.getN());
+    // Busca em largura que retorna os indices dos vertices visitados
+    /*@
+    @ requires grafo != null;
+    @ requires verticeInicial != null;
+    @ ensures \result != null;
+    // Para cara índice v na lista resultante, existe um Vértice u com índice v na lista de vértices do grafo.
+    @ ensures (\forall int v; \result.contains(v) ==> (\exists Vertice u; grafo.getListaVertices().contains(u) && u.getN() == v));
+    @ ensures \result.contains(verticeInicial.getN());
+    @*/
     public List<Integer> bfs(Grafo grafo, Vertice verticeInicial) {
         List<Integer> visitados = new ArrayList<>();
         // assert visitados != null;
@@ -60,8 +63,9 @@ public class Algoritmos {
 
         /*@
         @ maintaining 0 <= i <= atual.listaAdjascencia.size();
+        // (todos os vértices adjacentes já processados (índices menores que i) ou foram visitados ou estão na fila para serem visitados)
         @ maintaining (\forall int j; 0 <= j < i ==> visitados.contains(atual.listaAdjascencia.get(j)) || (\exists Vertice v; grafo.getListaVertices().contains(v) && v.getN() == atual.listaAdjascencia.get(j) && fila.contains(v)));
-        @ loop_invariant visitados != null && fila != null;
+        @ maintaining visitados != null && fila != null;
         @ loop_writes fila, visitados;
         @ decreases atual.listaAdjascencia.size() - i;
         @*/
@@ -69,16 +73,19 @@ public class Algoritmos {
             Integer nVertice = atual.listaAdjascencia.get(i);
             Vertice adjacente = grafo.getListaVertices()
                     .get(grafo.getListaVertices().indexOf(new Vertice(nVertice)));
-
+            //@ assert adjacente != null;
+            
             // Se ainda não foi visitado, adiciona à fila e marca como visitado
             if (!visitados.contains(adjacente.getN())) {
                 fila.add(adjacente);
+                //@ assert fila.contains(adjacente);
                 visitados.add(adjacente.getN());
+                //@ assert visitados.contains(adjacente.getN());
             }
         }
             }
 
-        return visitados; // Retorna a lista de vértices visitados
+        return visitados; // Retorna a lista de indices dos vértices visitados
     }
 
 

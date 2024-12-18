@@ -61,11 +61,11 @@ public class Grafo {
     //@ requires v2 >= 0;
     //@ requires listaVertices != null;
     //@ requires listaVertices.size() > 2;
-    //@ requires (\exists int i; 0 <= i < listaVertices.size(); listaVertices.get(i).getN() == v1);
+    //@ requires (\exists int i; 0 <= i < listaVertices.size(); listaVertices.get(i).getN() == v1); 
     //@ requires (\exists int j; 0 <= j < listaVertices.size(); listaVertices.get(j).getN() == v2);
     //@ requires this.L < Integer.MAX_VALUE;
     //@ ensures this.L == \old(this.L) + 1;
-    // TODO especificar que agora existe aresta entre v1 e v2
+    // @ ensures \exists int i; 0 <= i < listaVertices.size() && listaVertices.get(i).getN() == v1; (\exists int j; 0 <= j < listaVertices.get(i).listaAdjascencia.size(); listaVertices.get(i).listaAdjascencia.get(j) == v2);
     void addAresta(int v1, int v2) {
         int index1 = -1;
         int index2 = -1;
@@ -97,7 +97,17 @@ public class Grafo {
         }
 
         listaVertices.get(index1).listaAdjascencia.add(v2);
+        //@ assert listaVertices.get(index1).listaAdjascencia.size() >= 1;
+        //@ assert 0 <= listaVertices.get(index1).listaAdjascencia.size() - 1 < listaVertices.get(index1).listaAdjascencia.size();
+        //@ assert 0<= index1 < listaVertices.size();
+        //@ assert listaVertices.get(index1).listaAdjascencia.get(listaVertices.get(index1).listaAdjascencia.size() - 1) == v2;
         listaVertices.get(index2).listaAdjascencia.add(v1);
+        //@ assert listaVertices.get(index2).listaAdjascencia.size() >= 1;
+        //@ assert 0 <= listaVertices.get(index2).listaAdjascencia.size() - 1 < listaVertices.get(index2).listaAdjascencia.size();
+        //@ assert listaVertices.get(index2).listaAdjascencia.get(listaVertices.get(index2).listaAdjascencia.size() - 1) == v1;
+
+        // @ assert \exists int j; 0 <= j < listaVertices.get(index2).listaAdjascencia.size(); listaVertices.get(index2).listaAdjascencia.get(j) == v1;
+        // @ assert \exists int j; 0 <= j < listaVertices.get(index1).listaAdjascencia.size(); listaVertices.get(index1).listaAdjascencia.get(j) == v2;
         this.L++;
     }
 

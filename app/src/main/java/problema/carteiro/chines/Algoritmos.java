@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Stack;
 // import javafx.util.Pair;
 import java.util.AbstractMap;
 
@@ -34,7 +35,7 @@ public class Algoritmos {
     // @ ensures 
     // @ model public pure void lemmaVerticesConectados(Vertice i, Vertice j) {}
     
-
+    public static int PESO = 1;
 
     // Busca em largura que retorna os indices dos vertices visitados
     /*@
@@ -74,7 +75,7 @@ public class Algoritmos {
             Vertice adjacente = grafo.getListaVertices()
                     .get(grafo.getListaVertices().indexOf(new Vertice(nVertice)));
             //@ assert adjacente != null;
-            
+
             // Se ainda não foi visitado, adiciona à fila e marca como visitado
             if (!visitados.contains(adjacente.getN())) {
                 fila.add(adjacente);
@@ -88,8 +89,58 @@ public class Algoritmos {
         return visitados; // Retorna a lista de indices dos vértices visitados
     }
 
+    // Busca em profundidade que retorna os índices dos vértices visitados
+    /*@
+    @ requires grafo != null;
+    @ requires verticeInicial != null;
+    @ ensures \result != null;
+    // Para cada índice v na lista resultante, existe um Vértice u com índice v na lista de vértices do grafo.
+    @ ensures (\forall int v; \result.contains(v) ==> (\exists Vertice u; grafo.getListaVertices().contains(u) && u.getN() == v));
+    @ ensures \result.contains(verticeInicial.getN());
+    @*/
+    public List<Integer> dfs(Grafo grafo, Vertice verticeInicial) {
+        List<Integer> visitados = new ArrayList<>();
+        Stack<Vertice> pilha = new Stack<>();
+        // assert visitados != null;
+        // assert pilha != null;
 
-    public static int PESO = 1;
+        pilha.push(verticeInicial);
+        visitados.add(verticeInicial.getN());
+
+        //@ maintaining !pilha.isEmpty() ==> (\forall Vertice v; pilha.contains(v) ==> !visitados.contains(v.getN()));
+        //@ maintaining (\forall Vertice u; visitados.contains(u.getN()) ==> grafo.getListaVertices().contains(u));
+        //@ loop_writes pilha, visitados;
+        //@ decreases pilha.size();
+        while (!pilha.isEmpty()) {
+            Vertice atual = pilha.pop(); // Remove o próximo da pilha
+
+            /*@
+            @ maintaining 0 <= i <= atual.listaAdjascencia.size();
+            // (todos os vértices adjacentes já processados (índices menores que i) ou foram visitados ou estão na pilha para serem visitados)
+            @ maintaining (\forall int j; 0 <= j < i ==> visitados.contains(atual.listaAdjascencia.get(j)) || (\exists Vertice v; grafo.getListaVertices().contains(v) && v.getN() == atual.listaAdjascencia.get(j) && pilha.contains(v)));
+            @ maintaining visitados != null && pilha != null;
+            @ loop_writes pilha, visitados;
+            @ decreases atual.listaAdjascencia.size() - i;
+            @*/
+            for (int i = 0; i < atual.listaAdjascencia.size(); i++) {
+                Integer nVertice = atual.listaAdjascencia.get(i);
+                Vertice adjacente = grafo.getListaVertices()
+                        .get(grafo.getListaVertices().indexOf(new Vertice(nVertice)));
+                //@ assert adjacente != null;
+
+                // Se ainda não foi visitado, adiciona à pilha e marca como visitado
+                if (!visitados.contains(adjacente.getN())) {
+                    pilha.push(adjacente);
+                    //@ assert pilha.contains(adjacente);
+                    visitados.add(adjacente.getN());
+                    //@ assert visitados.contains(adjacente.getN());
+                }
+            }
+        }
+
+        return visitados; // Retorna a lista de índices dos vértices visitados
+    }
+
 
     /**
      * Função que checa se o grafo é conexo.
